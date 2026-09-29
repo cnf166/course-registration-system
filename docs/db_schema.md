@@ -16,7 +16,6 @@ erDiagram
         VARCHAR name
         VARCHAR email UK
         VARCHAR password_hash
-        VARCHAR salt
         INTEGER role
         TIMESTAMP created_at
     }
@@ -43,7 +42,7 @@ erDiagram
     COURSE_CLASS {
         VARCHAR class_id PK
         UUID course_id FK
-        INTEGER semeter
+        INTEGER semester
         INTEGER year
         VARCHAR section
         VARCHAR schedule
