@@ -1,4 +1,4 @@
-# Project Structure — Phase 1
+# Project Structure — Pha 1
 
 ## 1. Tổng quan
 
