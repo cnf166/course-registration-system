@@ -1,70 +1,130 @@
-# API Specification
+# Hệ thống đăng ký học phần
 
-**Actors:** Student & System-Admin
+Backend service cho hệ thống đăng ký học phần môn học.
 
----
+## Overview
 
-## 1. Authentication & User Profile
+Hệ thống hỗ trợ sinh viên:
 
-**Base paths:** `/api/v1/auth`, `/api/v1/users`
+- Tra cứu môn học.
+- Xem lớp học phần.
+- Đăng ký và hủy học phần.
+- Xem thời khóa biểu.
+- Xem bảng điểm và thông tin học tập.
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `POST` | `/api/v1/auth/login` | Public | Đăng nhập bằng mã sinh viên/email + password, trả về Access Token (JWT) & Refresh Token. |
-| `POST` | `/api/v1/auth/refresh-token` | Public | Cấp mới Access Token khi token cũ hết hạn. |
-| `GET` | `/api/v1/users/me` | Authenticated | Lấy thông tin cá nhân của người dùng đang đăng nhập (họ tên, MSSV, khoa/viện, vai trò). |
-| `PUT` | `/api/v1/users/me/password` | Authenticated | Đổi mật khẩu cá nhân. |
+System Admin quản lý:
 
----
+- Môn học.
+- Lớp học phần.
+- Học kỳ.
+- Các đợt đăng ký học phần.
 
-## 2. Training Programs & Courses
+## Tech Stack
 
-**Base path:** `/api/v1/courses`
+- Java
+- Spring Boot
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Spring Security
+- JWT
+- Maven
+- OpenAPI / Swagger
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/courses` | Public / Auth | Tra cứu danh mục môn học (hỗ trợ phân trang, filter theo khoa, số tín chỉ, từ khóa). |
-| `GET` | `/api/v1/courses/{courseCode}` | Public / Auth | Chi tiết môn học, danh sách môn tiên quyết (prerequisites), môn học song hành. |
-| `POST` | `/api/v1/courses` | ADMIN | Thêm môn học mới vào hệ sinh thái đào tạo. |
-| `PUT` | `/api/v1/courses/{courseCode}` | ADMIN | Cập nhật thông tin môn học, số tín chỉ, điều kiện tiên quyết. |
+## Project Structure
 
----
+```text
+src/
+├── main/
+│   ├── java/
+│   │   └── com/
+│   │       └── course_registration_system/
+│   │           ├── api/
+│   │           ├── business/
+│   │           ├── data/
+│   │           ├── security/
+│   │           ├── config/
+│   │           └── SoftwareArchitectApplication.java
+│   │
+│   └── resources/
+│
+└── test/
+```
 
-## 3. Semesters & Registration Periods
+Chi tiết về cấu trúc và dependency rules:
 
-**Base paths:** `/api/v1/semesters`, `/api/v1/registration-periods`
+- [Kiến trúc hệ thống](docs/architecture.md)
 
-### Registration Session
+API contract:
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/semesters/current` | Public / Auth | Lấy thông tin học kỳ hiện tại đang kích hoạt. |
-| `GET` | `/api/v1/registration-periods/active` | Public / Auth | Lấy danh sách các đợt đăng ký tín chỉ đang mở (kèm khung giờ mở cho từng khóa/khoa). |
-| `POST` | `/api/v1/registration-periods` | ADMIN | Thiết lập đợt mở đăng ký (thời gian bắt đầu, kết thúc, giới hạn tín chỉ tối đa/tối thiểu). |
+- [Đặc tả API](docs/api-specification.md)
 
----
+## Requirements
 
-## 4. Course Classes
+- Java
+- Maven
+- PostgreSQL
 
-**Base path:** `/api/v1/course-classes`
+## Configuration
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/course-classes` | Public / Auth | Tra cứu danh sách lớp mở trong kỳ (filter: semesterId, courseCode, thứ trong tuần, giảng viên). |
-| `GET` | `/api/v1/course-classes/{classId}` | Public / Auth | Chi tiết lớp: thời khóa biểu chi tiết, phòng học, giảng viên, sĩ số hiện tại / sĩ số tối đa (`enrolledCount` / `capacity`). |
-| `POST` | `/api/v1/course-classes` | ADMIN | Tạo mới một lớp học phần kèm lịch học và phân bổ phòng. |
-| `PUT` | `/api/v1/course-classes/{classId}/status` | ADMIN | Đóng/mở lớp thủ công, hoặc hủy lớp nếu không đủ sĩ số tối thiểu. |
+Project sử dụng environment variables cho các thông tin cấu hình nhạy cảm.
 
----
+Các cấu hình chính:
 
-## 5. Enrollments & Academic Results
+```text
+DATABASE_URL
+DATABASE_USERNAME
+DATABASE_PASSWORD
+JWT_SECRET
+```
 
-**Base paths:** `/api/v1/enrollments`, `/api/v1/schedules`
+Không commit database credentials hoặc secrets vào repository.
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `POST` | `/api/v1/enrollments` | STUDENT | **Đăng ký học phần (Core):** Gửi `classId` để đăng ký vào lớp. Hệ thống kiểm tra điều kiện tiên quyết, **trùng lịch**, và trừ slot **giữ chỗ**. |
-| `DELETE` | `/api/v1/enrollments/{classId}` | STUDENT | **Hủy học phần:** Hủy lớp đã đăng ký trong thời gian cho phép, nhả lại slot cho sinh viên khác. |
-| `GET` | `/api/v1/enrollments/my-classes` | STUDENT | Xem danh sách các lớp học phần sinh viên đã đăng ký **thành công** trong kỳ (kèm tổng số tín chỉ tích lũy). |
-| `GET` | `/api/v1/schedules/me` | STUDENT | Lấy thời khóa biểu tuần/tháng cá nhân dựa trên các lớp đã ghi danh. |
-| `GET` | `/api/v1/transcripts/me` | STUDENT | Xem bảng điểm tích lũy, điểm GPA/CPA các kỳ trước (dùng để validate điều kiện môn tiên quyết). |
+## Run the Application
+
+Sử dụng Maven Wrapper:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Build project:
+
+```bash
+./mvnw clean package
+```
+
+Chạy file JAR sau khi build:
+
+```bash
+java -jar target/<application>.jar
+```
+
+## API Documentation
+
+API được mô tả bằng OpenAPI/Swagger.
+
+Sau khi application chạy, Swagger UI có thể được sử dụng để xem và test các endpoint được cấu hình trong project.
+
+## Development
+
+Các thay đổi về code cần tuân theo kiến trúc được mô tả trong:
+
+- [Kiến trúc hệ thống](docs/architecture.md)
+- [Đặc tả API](docs/api-specification.md)
+
+Business Layer không phụ thuộc vào Spring, JPA, Hibernate hoặc PostgreSQL.
+
+## Git Workflow
+
+```text
+feature branch
+      ↓
+Pull Request
+      ↓
+Review
+      ↓
+master
+```
+
+Các thay đổi được thực hiện trên feature branch và đưa vào `master` thông qua Pull Request.
