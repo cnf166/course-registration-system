@@ -1,4 +1,4 @@
-package com.course_registration_system.define;
+package com.course_registration_system.data.define;
 
 public final class UserRole {
     public static final int GENERIC = 0;
