@@ -1,4 +1,4 @@
-package com.course_registration_system.entity;
+package com.course_registration_system.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "student")
+@Table(name = "system_admin")
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserStudent {
+public class UserSystemAdmin {
     @Id
     @Column(name = "user_id")
     private UUID id;
@@ -21,9 +21,4 @@ public class UserStudent {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User user;
-
-    private String major;
-
-    @Column(name = "student_id", unique = true)
-    private String studentId;
 }
