@@ -1,4 +1,4 @@
-package com.course_registration_system.entity;
+package com.course_registration_system.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
