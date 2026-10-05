@@ -19,18 +19,22 @@ public class CourseClass {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_code", nullable = false)
     private Course course;
 
-    @Column(nullable = false)
-    private int semester;
-
-    @Column(nullable = false)
-    private int year;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "semester_id", nullable = false)
+    private Semester semester;
 
     private String section;
 
-    private String schedule;
+    // as in define/Day.java
+    @Column(name = "day_in_week", nullable = false)
+    private int[] dayInWeek;
+
+    // as in define/DayShift.java
+    @Column(name = "day_shift", nullable = false)
+    private int[] dayShift;
 
     private String room;
 

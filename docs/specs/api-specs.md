@@ -38,20 +38,20 @@
 
 ---
 
-## 3. Semesters & Registration Periods
+## 3. Semesters & Enrollment Periods
 
 **Base paths:**
 
 - `/api/v1/semesters`
-- `/api/v1/registration-periods`
+- `/api/v1/enrollment-periods`
 
-### Registration Session
+### Enrollment Session
 
 | Method | Endpoint | Permission | Description |
 |---|---|---|---|
 | `GET` | `/api/v1/semesters/current` | Public / Auth | Lấy thông tin học kỳ hiện tại đang kích hoạt. |
-| `GET` | `/api/v1/registration-periods/active` | Public / Auth | Lấy danh sách các đợt đăng ký tín chỉ đang mở, kèm khung giờ mở cho từng khóa/khoa. |
-| `POST` | `/api/v1/registration-periods` | ADMIN | Thiết lập đợt mở đăng ký: thời gian bắt đầu, kết thúc và giới hạn tín chỉ tối đa/tối thiểu. |
+| `GET` | `/api/v1/enrollment-periods/active` | Public / Auth | Lấy danh sách các đợt đăng ký tín chỉ đang mở, kèm khung giờ mở cho từng khóa/khoa. |
+| `POST` | `/api/v1/enrollment-periods` | ADMIN | Thiết lập đợt mở đăng ký: thời gian bắt đầu, kết thúc và giới hạn tín chỉ tối đa/tối thiểu. |
 
 ---
 

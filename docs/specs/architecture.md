@@ -209,10 +209,10 @@ Chứa các business rules liên quan đến đăng ký học phần.
 ### `semester/`
 
 - `Semester`
-- `RegistrationPeriod`
+- `EnrollmentPeriod`
 - `SemesterService`
 - `SemesterRepository`
-- `RegistrationPeriodRepository`
+- `EnrollmentPeriodRepository`
 
 ### `exception/`
 
@@ -250,7 +250,7 @@ CourseEntity
 CourseClassEntity
 EnrollmentEntity
 SemesterEntity
-RegistrationPeriodEntity
+EnrollmentPeriodEntity
 ```
 
 Đây là database representation, không dùng trực tiếp trong Business Layer.
