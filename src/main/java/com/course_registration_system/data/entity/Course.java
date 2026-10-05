@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "course")
@@ -16,9 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "course_id")
-    private UUID id;
+    @Column(name = "course_code") // code assigned by system admin
+    private String code;
 
     @Column(nullable = false)
     private String title;
