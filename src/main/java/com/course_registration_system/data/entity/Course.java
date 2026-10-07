@@ -29,7 +29,7 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "created_by", nullable = false)
-    private UserSystemAdmin createdBy;
+    private SystemAdmin createdBy;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

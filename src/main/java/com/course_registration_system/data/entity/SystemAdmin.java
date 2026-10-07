@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserSystemAdmin {
+public class SystemAdmin {
     @Id
     @Column(name = "user_id")
     private UUID id;
