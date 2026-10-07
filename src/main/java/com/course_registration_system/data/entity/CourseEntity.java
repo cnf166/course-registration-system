@@ -13,7 +13,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Course {
+public class CourseEntity {
     @Id
     @Column(name = "course_code") // code assigned by system admin
     private String code;
@@ -29,7 +29,7 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "created_by", nullable = false)
-    private SystemAdmin createdBy;
+    private SystemAdminEntity createdBy;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

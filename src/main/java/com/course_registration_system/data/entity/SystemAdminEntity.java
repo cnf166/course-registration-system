@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "student")
+@Table(name = "system_admin")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Student {
+public class SystemAdminEntity {
     @Id
     @Column(name = "user_id")
     private UUID id;
@@ -21,9 +21,4 @@ public class Student {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private UserEntity user;
-
-    private String major;
-
-    @Column(name = "student_id", unique = true)
-    private String studentId;
 }

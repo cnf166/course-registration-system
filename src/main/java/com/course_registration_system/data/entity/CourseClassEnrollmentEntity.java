@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourseClassEnrollment {
+public class CourseClassEnrollmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "enrollment_id")
@@ -25,11 +25,11 @@ public class CourseClassEnrollment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    private StudentEntity student;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "class_id", nullable = false)
-    private CourseClass courseClass;
+    private CourseClassEntity courseClass;
 
     @CreationTimestamp
     @Column(name = "enrolled_at", nullable = false, updatable = false)

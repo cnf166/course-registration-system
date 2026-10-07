@@ -188,13 +188,13 @@ Chứa logic authentication và các abstraction liên quan.
 
 ### `course/`
 
-- `Course`
+- `CourseEntity`
 - `CourseService`
 - `CourseRepository`
 
 ### `courseclass/`
 
-- `CourseClass`
+- `CourseClassEntity`
 - `CourseClassService`
 - `CourseClassRepository`
 
@@ -208,8 +208,8 @@ Chứa các business rules liên quan đến đăng ký học phần.
 
 ### `semester/`
 
-- `Semester`
-- `EnrollmentPeriod`
+- `SemesterEntity`
+- `EnrollmentPeriodEntity`
 - `SemesterService`
 - `SemesterRepository`
 - `EnrollmentPeriodRepository`

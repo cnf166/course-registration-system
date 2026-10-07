@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Semester {
+public class SemesterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "semester_id")
