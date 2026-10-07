@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface SystemAdminRepository extends JpaRepository<SystemAdminEntity, UUID> {
+public interface JpaSystemAdminRepository extends JpaRepository<SystemAdminEntity, UUID> {
 }
