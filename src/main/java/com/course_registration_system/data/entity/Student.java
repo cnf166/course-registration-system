@@ -20,7 +20,7 @@ public class Student {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     private String major;
 

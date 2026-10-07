@@ -182,9 +182,9 @@ Chứa logic authentication và các abstraction liên quan.
 
 ### `user/`
 
-- `User`
+- `UserEntity`
 - `UserService`
-- `UserRepository`
+- `JpaUserRepository`
 
 ### `course/`
 
