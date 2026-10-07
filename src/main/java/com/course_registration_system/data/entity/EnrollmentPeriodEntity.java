@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EnrollmentPeriod {
+public class EnrollmentPeriodEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "period_id")
@@ -21,7 +21,7 @@ public class EnrollmentPeriod {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "semester_id", nullable = false)
-    private Semester semester;
+    private SemesterEntity semester;
 
     @Column(name = "start_at", nullable = false)
     private Instant startAt;

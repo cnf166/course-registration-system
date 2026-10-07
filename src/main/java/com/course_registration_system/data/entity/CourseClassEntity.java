@@ -13,18 +13,18 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourseClass {
+public class CourseClassEntity {
     @Id
     @Column(name = "class_id") // id created by system admin
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_code", nullable = false)
-    private Course course;
+    private CourseEntity course;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "semester_id", nullable = false)
-    private Semester semester;
+    private SemesterEntity semester;
 
     private String section;
 
