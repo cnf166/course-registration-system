@@ -53,11 +53,11 @@ src/
 
 Chi tiết về cấu trúc và dependency rules:
 
-- [Kiến trúc hệ thống](docs/architecture.md)
+- [Kiến trúc hệ thống](docs/specs/architecture.md)
 
 API contract:
 
-- [Đặc tả API](docs/api-specification.md)
+- [Đặc tả API](docs/specs/api-specification.md)
 
 ## Requirements
 
