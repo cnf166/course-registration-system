@@ -72,9 +72,9 @@ Project sử dụng environment variables cho các thông tin cấu hình nhạy
 Các cấu hình chính:
 
 ```text
-DATABASE_URL
-DATABASE_USERNAME
-DATABASE_PASSWORD
+DB_URL
+DB_USERNAME
+DB_PASSWORD
 JWT_SECRET
 ```
 
