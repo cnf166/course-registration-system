@@ -7,30 +7,29 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
-@Table(name = "users") // "user" is reserved in PostgreSQL
+@Table(name = "course")
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class CourseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "user_id")
-    private UUID id;
+    @Column(name = "course_code") // code assigned by system admin
+    private String code;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false)
-    private int role;
+    private int credits;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by", nullable = false)
+    private SystemAdminEntity createdBy;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
