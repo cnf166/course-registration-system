@@ -1,499 +1,81 @@
 # Project Structure — Pha 1
 
-## 1. Tổng quan
-
-Project sử dụng kiến trúc phân tầng:
+Backend hệ thống được chia thành ba tầng: **API**, **Business (Nghiệp Vụ)**, **Data**. Business nằm ở giữa và không biết gì về framework hay database; API và Data cùng phụ thuộc vào nó.
 
 ```text
-API
- ↓
-Business
- ↑
-Data Access
+API ──→ Business ←── Data
 ```
 
-Runtime flow:
+Một request đi qua các lớp như sau:
 
 ```text
-HTTP Request
-    ↓
-API / Controller
-    ↓
-Business Service
-    ↓
-Repository Port
-    ↓
-Repository Adapter
-    ↓
-Spring Data / JPA
-    ↓
-PostgreSQL
+HTTP → Controller → Service → Repository (interface) → Adapter → Spring Data/JPA → PostgreSQL
 ```
 
-Business Layer là phần độc lập với framework và database.
-
----
-
-## 2. Cấu trúc project
+## Cấu trúc thư mục
 
 ```text
-src/
-├── main/
-│   ├── java/
-│   │   └── com/
-│   │       └── course_registration_system/
-│   │           ├── SoftwareArchitectApplication.java
-│   │           │
-│   │           ├── api/
-│   │           │   ├── controller/
-│   │           │   ├── dto/
-│   │           │   │   ├── request/
-│   │           │   │   └── response/
-│   │           │   ├── mapper/
-│   │           │   └── error/
-│   │           │
-│   │           ├── business/
-│   │           │   ├── exception/
-│   │           │   ├── auth/
-│   │           │   ├── user/
-│   │           │   ├── course/
-│   │           │   ├── courseclass/
-│   │           │   ├── enrollment/
-│   │           │   └── semester/
-│   │           │
-│   │           ├── data/
-│   │           │   ├── entity/
-│   │           │   ├── repository/
-│   │           │   └── mapper/
-│   │           │
-│   │           ├── security/
-│   │           │
-│   │           └── config/
-│   │
-│   └── resources/
-│       ├── application.properties
-│       └── db/
-│           └── migration/
-│
-└── test/
-    └── java/
-        └── com/
-            └── course_registration_system/
-```
-
----
-
-## 3. API Layer
-
-Package:
-
-```text
-api/
-├── controller/
-├── dto/
-├── mapper/
-└── error/
-```
-
-Chịu trách nhiệm:
-
-- HTTP request/response.
-- REST API.
-- Request validation.
-- DTO.
-- HTTP status.
-- Chuyển đổi DTO ↔ Business Model.
-- Xử lý exception ở mức HTTP.
-
-### `controller/`
-
-- Nhận HTTP request.
-- Gọi Business Service.
-- Trả HTTP response.
-- Không chứa business rules.
-- Không truy cập trực tiếp database.
-
-### `dto/`
-
-- `request/`: dữ liệu từ client.
-- `response/`: dữ liệu trả về client.
-- Không sử dụng DTO làm Business Model.
-
-### `mapper/`
-
-- Chuyển đổi giữa API DTO và Business Model.
-
-### `error/`
-
-- `GlobalExceptionHandler`.
-- `ErrorResponse`.
-- Chuyển Business Exception thành HTTP response.
-
----
-
-## 4. Business Layer
-
-Package:
-
-```text
-business/
-├── exception/
-├── auth/
-├── user/
-├── course/
-├── courseclass/
-├── enrollment/
-└── semester/
-```
-
-Chịu trách nhiệm:
-
-- Business Model.
-- Business Service.
-- Business Rules.
-- Repository Interfaces / Ports.
-- Business Exceptions.
-
-### Dependency rule
-
-Business không phụ thuộc vào:
-
-```text
-Spring Web
-Spring Data
-JPA
-Hibernate
-PostgreSQL
-HTTP
-JSON
-API DTO
-JPA Entity
-```
-
-Business Layer phải giữ ở dạng Plain Java.
-
-### `auth/`
-
-- `AuthService`
-- `PasswordHasher`
-- `TokenService`
-
-Chứa logic authentication và các abstraction liên quan.
-
-### `user/`
-
-- `UserEntity`
-- `UserService`
-- `JpaUserRepository`
-
-### `course/`
-
-- `CourseEntity`
-- `CourseService`
-- `CourseRepository`
-
-### `courseclass/`
-
-- `CourseClassEntity`
-- `CourseClassService`
-- `CourseClassRepository`
-
-### `enrollment/`
-
-- `Enrollment`
-- `EnrollmentService`
-- `EnrollmentRepository`
-
-Chứa các business rules liên quan đến đăng ký học phần.
-
-### `semester/`
-
-- `SemesterEntity`
-- `EnrollmentPeriodEntity`
-- `SemesterService`
-- `SemesterRepository`
-- `EnrollmentPeriodRepository`
-
-### `exception/`
-
-Chứa các exception thuộc business, không phụ thuộc HTTP.
-
----
-
-## 5. Data Access Layer
-
-Package:
-
-```text
-data/
-├── entity/
-├── repository/
-└── mapper/
-```
-
-Chịu trách nhiệm:
-
-- Database access.
-- JPA.
-- Hibernate.
-- Spring Data.
-- PostgreSQL.
-- Mapping Business Model ↔ Entity.
-
-### `entity/`
-
-Chứa các JPA Entity:
-
-```text
-UserEntity
-CourseEntity
-CourseClassEntity
-EnrollmentEntity
-SemesterEntity
-EnrollmentPeriodEntity
-```
-
-Đây là database representation, không dùng trực tiếp trong Business Layer.
-
-### `repository/`
-
-Gồm:
-
-- Spring Data repositories.
-- Repository adapters.
-
-Quan hệ:
-
-```text
-Business Repository Interface
-        ↑
-        │ implements
-Repository Adapter
-        ↓
-Spring Data Repository
-        ↓
-JPA Entity
-```
-
-### `mapper/`
-
-Chuyển đổi:
-
-```text
-Business Model ↔ JPA Entity
-```
-
-Không xử lý API DTO.
-
----
-
-## 6. Security
-
-Package:
-
-```text
-security/
-├── JwtAuthenticationFilter.java
-├── JwtTokenService.java
-├── BcryptPasswordHasher.java
-└── SecurityConfig.java
-```
-
-Chịu trách nhiệm:
-
-- JWT authentication.
-- Password hashing.
-- Authentication filter.
-- Authorization.
-- Security configuration.
-
-Authentication flow:
-
-```text
-HTTP Request
-    ↓
-JwtAuthenticationFilter
-    ↓
-SecurityContext
-    ↓
-Controller
-```
-
-Security implementation thực hiện các interface được định nghĩa trong Business Layer:
-
-```text
-TokenService
-PasswordHasher
-```
-
----
-
-## 7. Config
-
-Package:
-
-```text
-config/
-├── BeanConfig.java
-├── OpenApiConfig.java
-└── DataSeeder.java
-```
-
-- `BeanConfig`: cấu hình và wire các Business Service.
-- `OpenApiConfig`: cấu hình OpenAPI/Swagger.
-- `DataSeeder`: dữ liệu ban đầu cho môi trường development.
-
----
-
-## 8. Resources
-
-```text
-resources/
+src/main/java/com/course_registration_system/
+├── SoftwareArchitectApplication.java
+├── api/
+│   ├── controller/
+│   ├── dto/{request,response}/
+│   ├── mapper/          # DTO <-> Business Model
+│   └── error/           # GlobalExceptionHandler, ErrorResponse
+├── business/
+│   ├── auth/            # AuthService, PasswordHasher, TokenService
+│   ├── user/
+│   ├── course/
+│   ├── courseclass/
+│   ├── enrollment/
+│   ├── semester/        # gồm cả EnrollmentPeriod
+│   └── exception/
+├── data/
+│   ├── entity/          # JPA entity
+│   ├── repository/      # Spring Data repo + adapter
+│   └── mapper/          # Business Model <-> Entity
+├── security/            # JWT, BCrypt, SecurityConfig
+└── config/              # BeanConfig, OpenApiConfig, DataSeeder
+
+src/main/resources/
 ├── application.properties
-└── db/
-    └── migration/
+└── db/migration/
 ```
 
-`application.properties`:
+Mỗi package con trong `business/` có cùng bộ ba: model, service, và interface repository (ví dụ `course/` có `Course`, `CourseService`, `CourseRepository`).
 
-- Database configuration.
-- JPA configuration.
-- JWT configuration.
-- Server configuration.
+## Các tầng
 
-Database credentials và secrets không hard-code trong source code.
+**API** xử lý phần HTTP: nhận request, validate, gọi service, trả response với status phù hợp. Controller không chứa business rule và không đụng database. `GlobalExceptionHandler` đổi business exception thành HTTP response.
 
-`db/migration/` chứa database migration scripts.
+**Business** là Plain Java: model, service, rule, interface repository và exception. Interface repository (port) do Business định nghĩa, Data implement.
 
----
+**Data** lo mọi thứ liên quan đến lưu trữ. Adapter implement interface repository của Business, bên trong gọi Spring Data repository, rồi dùng mapper để đổi qua lại giữa entity và business model.
 
-## 9. Model Boundaries
+**Security** xử lý JWT và hash password. `JwtTokenService` và `BcryptPasswordHasher` implement `TokenService` và `PasswordHasher` của Business. `JwtAuthenticationFilter` đọc token, đặt identity vào `SecurityContext` trước khi request tới controller.
 
-Project có ba loại representation:
+**Config**: `BeanConfig` wire các service, `OpenApiConfig` cấu hình Swagger, `DataSeeder` nạp dữ liệu cho môi trường dev.
 
-```text
-API DTO
-   ↓
-Business Model
-   ↓
-JPA Entity
-   ↓
-Database
-```
+## Ba loại model
 
-Ranh giới giữa các tầng:
+| Model | Nằm ở | Dùng để |
+|---|---|---|
+| DTO | `api/dto` | Dữ liệu vào/ra qua HTTP |
+| Business Model | `business/*` | Logic nghiệp vụ |
+| JPA Entity | `data/entity` | Ánh xạ bảng database |
 
-```text
-API Mapper
-    ↓
-DTO ↔ Business Model
+Chuyển đổi chỉ xảy ra ở hai mapper: API Mapper (DTO ↔ Business Model) và Data Mapper (Business Model ↔ Entity). Không dùng chéo: không đưa DTO hoặc Entity vào Business, không trả Entity thẳng ra API.
 
-Data Mapper
-    ↓
-Business Model ↔ JPA Entity
-```
+## Quy tắc phụ thuộc
 
-Không dùng:
+Business không import Spring, JPA, Hibernate, HTTP/JSON, DTO, Entity hay bất cứ thứ gì từ `api`, `data`, `security`.
 
-- JPA Entity trong Business Layer.
-- API DTO trong Business Layer.
-- JPA Entity làm API Response.
+Ngoài ra:
 
----
+- Business Service không được phụ thuộc vòng tròn lẫn nhau.
+- JPA Repository và Entity chỉ tồn tại trong `data/`.
+- Khi đã có identity từ JWT thì lấy user từ đó, không tin `studentId` trong request body.
 
-## 10. Dependency Rules
+## Cấu hình
 
-### Được phép
-
-```text
-API → Business
-
-Data → Business
-```
-
-Data triển khai các interface do Business định nghĩa.
-
-### Không được phép
-
-```text
-Business → API
-Business → Data
-Business → Security
-Business → Spring Web
-Business → Spring Data
-Business → JPA
-Business → Hibernate
-Business → PostgreSQL
-```
-
-### Các rule chính
-
-- Business Service không phụ thuộc Spring.
-- Business Repository chỉ là interface.
-- JPA Repository chỉ nằm trong Data Layer.
-- JPA Entity chỉ nằm trong Data Layer.
-- Controller không chứa business rules.
-- Controller không truy cập database trực tiếp.
-- Không trả JPA Entity trực tiếp qua API.
-- API Mapper và Data Mapper là hai boundary khác nhau.
-- Không tạo circular dependency giữa các Business Service.
-- JWT được xử lý tại Security Layer.
-- Nếu identity đã có từ JWT, không dùng `studentId` từ request body để xác định người dùng.
-
----
-
-## 11. Core Architecture
-
-```text
-                         CLIENT
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │     API     │
-                    │ Controllers │
-                    │ DTOs        │
-                    │ Mappers     │
-                    └──────┬──────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │  BUSINESS   │
-                    │ Models      │
-                    │ Services    │
-                    │ Rules       │
-                    │ Ports       │
-                    └──────▲──────┘
-                           │
-                       implements
-                           │
-                    ┌──────┴──────┐
-                    │    DATA     │
-                    │ Adapters    │
-                    │ JPA         │
-                    │ Entities    │
-                    │ Mappers     │
-                    └──────┬──────┘
-                           │
-                           ▼
-                       PostgreSQL
-
-              ┌──────────────────────────┐
-              │        SECURITY          │
-              │ JWT / BCrypt             │
-              └──────────────────────────┘
-
-              ┌──────────────────────────┐
-              │         CONFIG           │
-              │ Bean / OpenAPI / Seeder  │
-              └──────────────────────────┘
-```
-
-### Core rule
-
-```text
-API ──────────────→ BUSINESS ←────────────── DATA
-
-                     │
-                     ├── No framework
-                     └── No database
-```
+`application.properties` chứa cấu hình database, JPA, JWT và server. Credential và secret lấy từ biến môi trường, không hard-code. Migration script nằm trong `db/migration/`.

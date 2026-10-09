@@ -53,11 +53,11 @@ src/
 
 Chi tiết về cấu trúc và dependency rules:
 
-- [Kiến trúc hệ thống](docs/architecture.md)
+- [Kiến trúc hệ thống](docs/specs/architecture.md)
 
 API contract:
 
-- [Đặc tả API](docs/api-specification.md)
+- [Đặc tả API](docs/specs/api-specification.md)
 
 ## Requirements
 
@@ -72,9 +72,9 @@ Project sử dụng environment variables cho các thông tin cấu hình nhạy
 Các cấu hình chính:
 
 ```text
-DATABASE_URL
-DATABASE_USERNAME
-DATABASE_PASSWORD
+DB_URL
+DB_USERNAME
+DB_PASSWORD
 JWT_SECRET
 ```
 
