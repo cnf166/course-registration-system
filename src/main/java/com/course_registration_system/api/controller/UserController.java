@@ -4,12 +4,10 @@ import com.course_registration_system.api.dto.request.ChangePasswordRequest;
 import com.course_registration_system.api.dto.response.UserProfileResponse;
 import com.course_registration_system.api.error.ApiNotImplementedException;
 import com.course_registration_system.api.error.ErrorResponse;
-import com.course_registration_system.config.OpenApiConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 @Tag(name = "User Profile", description = "Profile and password of the signed-in user")
-@SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
 public class UserController {
 
     @GetMapping("/me")
     @Operation(
             summary = "Get my profile",
-            description = "Returns the profile of the signed-in user: name, student ID, faculty and role. "
+            description = "Returns the profile of the signed-in user: name, student ID, major and role. "
                     + "The user is identified from the JWT. Permission: Authenticated.")
     @ApiResponse(responseCode = "200", description = "Profile of the signed-in user")
     @ApiResponse(responseCode = "401", description = "Missing, invalid or expired access token",
