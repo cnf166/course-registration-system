@@ -37,7 +37,8 @@ public record CourseClassSummaryResponse(
         @Schema(description = "[NOT BACKED] Instructor of the class. Not stored yet.", nullable = true)
         String instructor,
 
-        @Schema(description = "[NOT BACKED] Status of the class. Not stored yet.", nullable = true)
-        ClassStatus status
+        @Schema(description = "[NOT BACKED] Status of the class. Not stored yet.",
+                allowableValues = {"OPEN", "CLOSED", "CANCELLED"}, nullable = true)
+        String status
 ) {
 }
