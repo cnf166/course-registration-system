@@ -62,7 +62,7 @@ public class CourseController {
     @ApiResponse(responseCode = "404", description = "Course not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<CourseDetailResponse> getCourse(
-            @Parameter(description = "Course code", example = "SE101")
+            @Parameter(description = "Course code", example = "INT3105")
             @PathVariable String courseCode) {
         throw new ApiNotImplementedException();
     }
@@ -99,7 +99,7 @@ public class CourseController {
     @ApiResponse(responseCode = "404", description = "Course not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<CourseDetailResponse> updateCourse(
-            @Parameter(description = "Course code", example = "SE101")
+            @Parameter(description = "Course code", example = "INT3105")
             @PathVariable String courseCode,
             @Valid @RequestBody UpdateCourseRequest request) {
         throw new ApiNotImplementedException();
