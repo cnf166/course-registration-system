@@ -42,7 +42,9 @@ Key architecture characteristics:
 
 ### Task 1 — Problem statement and business specification (Vinh)
 
-The team agrees on the problem and the rules in a meeting; Vinh writes the document.
+**Deadline:** Tue 2026-10-20, 09:00
+
+Vinh drafts the document up front; the team meeting confirms it rather than writing it from scratch.
 
 **Scope**
 
@@ -51,7 +53,7 @@ The team agrees on the problem and the rules in a meeting; Vinh writes the docum
 
 **Definition of done**
 
-- The team has agreed on the content in the meeting.
+- The team has confirmed the draft in the meeting.
 - The document is merged into `develop`.
 
 ### Task 2 — User flows (Việt)
