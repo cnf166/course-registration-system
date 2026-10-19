@@ -10,28 +10,27 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "course")
+@Table(name = "users") // "user" is reserved in PostgreSQL
 @Getter
 @Setter
 @NoArgsConstructor
-public class Course {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "course_id")
+    @Column(name = "user_id")
     private UUID id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @Column(nullable = false)
-    private int credits;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "created_by", nullable = false)
-    private UserSystemAdmin createdBy;
+    private int role;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

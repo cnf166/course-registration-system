@@ -8,7 +8,10 @@ erDiagram
     SYSTEM_ADMIN ||--o{ COURSE : creates
     COURSE ||--o{ COURSE_CLASS : has
 
-    STUDENT ||--o{ ENROLLMENT : registers
+    SEMESTER ||--o{ COURSE_CLASS : offers
+    SEMESTER ||--o{ ENROLLMENT_PERIOD : opens
+
+    STUDENT ||--o{ ENROLLMENT : enrolls
     COURSE_CLASS ||--o{ ENROLLMENT : receives
 
     USER {
@@ -31,7 +34,7 @@ erDiagram
     }
 
     COURSE {
-        UUID course_id PK
+        VARCHAR course_code PK
         VARCHAR title
         TEXT description
         INTEGER credits
@@ -41,20 +44,38 @@ erDiagram
 
     COURSE_CLASS {
         VARCHAR class_id PK
-        UUID course_id FK
-        INTEGER semester
-        INTEGER year
+        VARCHAR course_code FK
+        UUID semester_id FK
         VARCHAR section
-        VARCHAR schedule
+        INTEGER[] day_in_week "values from define/Day, paired by index with day_shift"
+        INTEGER[] day_shift "values from define/DayShift, paired by index with day_in_week"
         VARCHAR room
         INTEGER capacity
         TIMESTAMP created_at
     }
 
+    SEMESTER {
+        UUID semester_id PK
+        INTEGER year "UK (year, term)"
+        INTEGER term
+        DATE start_date
+        DATE end_date
+        BOOLEAN is_current "set by admin, at most one true"
+    }
+
+    ENROLLMENT_PERIOD {
+        UUID period_id PK
+        UUID semester_id FK
+        TIMESTAMP start_at
+        TIMESTAMP end_at
+        INTEGER min_credits
+        INTEGER max_credits
+    }
+
     ENROLLMENT {
         UUID enrollment_id PK
         UUID student_id FK
-        UUID class_id FK
+        VARCHAR class_id FK
         TIMESTAMP enrolled_at
         VARCHAR status
     }

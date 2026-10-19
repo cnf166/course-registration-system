@@ -13,24 +13,28 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourseClass {
+public class CourseClassEntity {
     @Id
     @Column(name = "class_id") // id created by system admin
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+    @JoinColumn(name = "course_code", nullable = false)
+    private CourseEntity course;
 
-    @Column(nullable = false)
-    private int semester;
-
-    @Column(nullable = false)
-    private int year;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "semester_id", nullable = false)
+    private SemesterEntity semester;
 
     private String section;
 
-    private String schedule;
+    // as in define/Day.java
+    @Column(name = "day_in_week", nullable = false)
+    private int[] dayInWeek;
+
+    // as in define/DayShift.java
+    @Column(name = "day_shift", nullable = false)
+    private int[] dayShift;
 
     private String room;
 
