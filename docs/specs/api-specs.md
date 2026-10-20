@@ -1,113 +1,272 @@
 # API Specification
 
-## Actors
+## 1. Phạm vi cho pha 1
 
-- **Student**
-- **System Admin**
+API chỉ bao gồm:
+- Đăng nhập và hồ sơ người dùng tối thiểu.
+- Tra cứu các lớp học và số chỗ còn lại.
+- Đăng ký một hoặc nhiều lớp trong một request, xử lý từng lớp độc lập.
+- Hủy đăng ký và tra cứu các lớp đã đăng ký.
+- Quản trị viên tạo lớp và cấu hình một đợt đăng ký chung.
 
----
+Không thuộc MVP: resource `Course` tách biệt với lớp, học kỳ, nhiều đợt đăng ký, môn tiên quyết, transcript/GPA, lịch học tổng hợp, thông báo, thanh toán, danh sách chờ, đổi lớp và chỉnh sửa/đóng lớp trong khi đợt đăng ký đang mở.
 
-## 1. Authentication & User Profile
+## 2. Actors và authentication
 
-**Base paths:**
+- `STUDENT`: tra cứu lớp, đăng ký/hủy lớp và xem các đăng ký của chính mình.
+- `SYSTEM_ADMIN`: tạo lớp và cấu hình thời gian mở/đóng đăng ký.
+- `Public`: endpoint không yêu cầu đăng nhập.
+- `Authenticated`: yêu cầu JWT hợp lệ.
 
-- `/api/v1/auth`
-- `/api/v1/users`
+Các endpoint được bảo vệ dùng `Authorization: Bearer <accessToken>`. Danh tính sinh viên lấy từ JWT; không nhận `studentId` hoặc `userId` của người đăng nhập trong request body để quyết định chủ thể thao tác.
 
-| Method | Endpoint | Permission | Description |
+### 2.1. Authentication & user profile
+
+| Method | Endpoint | Permission | Mục đích |
 |---|---|---|---|
-| `POST` | `/api/v1/auth/login` | Public | Đăng nhập bằng mã sinh viên/email và password. Trả về Access Token (JWT) và Refresh Token. |
-| `POST` | `/api/v1/auth/refresh-token` | Public | Cấp mới Access Token khi token cũ hết hạn. |
-| `GET` | `/api/v1/users/me` | Authenticated | Lấy thông tin cá nhân của người dùng đang đăng nhập: họ tên, MSSV, khoa/viện và vai trò. |
-| `PUT` | `/api/v1/users/me/password` | Authenticated | Đổi mật khẩu cá nhân. |
+| `POST` | `/api/v1/auth/login` | Public | Đăng nhập bằng email hoặc mã sinh viên và mật khẩu; trả access token và refresh token. |
+| `POST` | `/api/v1/auth/refresh-token` | Public | Đổi refresh token hợp lệ lấy access token mới theo chính sách refresh token. |
+| `GET` | `/api/v1/users/me` | Authenticated | Lấy hồ sơ của người dùng đang đăng nhập. |
+| `PUT` | `/api/v1/users/me/password` | Authenticated | Đổi mật khẩu của chính người dùng đang đăng nhập. |
 
----
+`POST /api/v1/auth/login` request:
 
-## 2. Training Programs & Courses
+```json
+{
+  "identifier": "student@example.edu",
+  "password": "example-password"
+}
+```
 
-**Base path:**
+`identifier` chấp nhận email hoặc mã sinh viên. Không trả `passwordHash` trong response.
 
-- `/api/v1/courses`
+Response thành công (cấu trúc minh họa):
 
-| Method | Endpoint | Permission | Description |
+```json
+{
+  "accessToken": "<jwt>",
+  "refreshToken": "<refresh-token>",
+  "tokenType": "Bearer",
+  "expiresIn": 900
+}
+```
+
+Thời hạn thực tế của token và chính sách rotation/revocation của refresh token phải được quy định trong tài liệu security/authentication.
+
+## 3. Course classes
+
+**Resource:** `/api/v1/course-classes`
+
+Một course class là đơn vị sinh viên đăng ký. Mã lớp do hệ thống sinh, không do client tự chọn. Thông tin tối thiểu của lớp gồm tên, số tín chỉ, sức chứa và lịch học.
+
+| Method | Endpoint | Permission | Mục đích |
 |---|---|---|---|
-| `GET` | `/api/v1/courses` | Public / Auth | Tra cứu danh mục môn học. Hỗ trợ phân trang, filter theo khoa, số tín chỉ và từ khóa. |
-| `GET` | `/api/v1/courses/{courseCode}` | Public / Auth | Xem chi tiết môn học, danh sách môn tiên quyết (prerequisites) và môn học song hành. |
-| `POST` | `/api/v1/courses` | ADMIN | Thêm môn học mới vào hệ thống. |
-| `PUT` | `/api/v1/courses/{courseCode}` | ADMIN | Cập nhật thông tin môn học, số tín chỉ và điều kiện tiên quyết. |
+| `GET` | `/api/v1/course-classes` | Public | Liệt kê lớp; hỗ trợ phân trang và các bộ lọc phù hợp với dữ liệu lớp thực tế. |
+| `GET` | `/api/v1/course-classes/{classId}` | Public | Xem chi tiết lớp, lịch học, sức chứa, số chỗ đã dùng và số chỗ còn lại. |
+| `POST` | `/api/v1/course-classes` | `SYSTEM_ADMIN` | Tạo lớp trước khi đợt đăng ký mở. |
 
----
+Ví dụ request tạo lớp:
 
-## 3. Semesters & Enrollment Periods
+```json
+{
+  "name": "Cơ sở dữ liệu - Nhóm 01",
+  "credits": 3,
+  "capacity": 60,
+  "schedule": [
+    {
+      "dayOfWeek": 2,
+      "shift": 1
+    },
+    {
+      "dayOfWeek": 4,
+      "shift": 1
+    }
+  ]
+}
+```
 
-**Base paths:**
+`classId` được hệ thống sinh và trả trong response. `dayOfWeek` và `shift` phải tuân theo enum/quy ước được công bố trong API schema; ví dụ trên chỉ minh họa hình dạng request, không định nghĩa giá trị số chính thức.
 
-- `/api/v1/semesters`
-- `/api/v1/enrollment-periods`
+Ví dụ dữ liệu lớp trong response:
 
-### Enrollment Session
+```json
+{
+  "classId": "CLS-...",
+  "name": "Cơ sở dữ liệu - Nhóm 01",
+  "credits": 3,
+  "capacity": 60,
+  "enrolledCount": 42,
+  "availableSeats": 18,
+  "schedule": [
+    {
+      "dayOfWeek": 2,
+      "shift": 1
+    }
+  ]
+}
+```
 
-| Method | Endpoint | Permission | Description |
+`availableSeats` là giá trị suy ra từ dữ liệu đăng ký hiện tại; không được dùng như một bảo đảm giữ chỗ. Việc xác nhận đăng ký phải dựa trên thao tác ghi có kiểm soát đồng thời ở backend/database.
+
+## 4. Enrollment period
+
+MVP chỉ có **một đợt đăng ký chung cho tất cả sinh viên**. Không có học kỳ hay các khung giờ riêng theo khóa/khoa trong phạm vi này.
+
+| Method | Endpoint | Permission | Mục đích |
 |---|---|---|---|
-| `GET` | `/api/v1/semesters/current` | Public / Auth | Lấy thông tin học kỳ hiện tại đang kích hoạt. |
-| `GET` | `/api/v1/enrollment-periods/active` | Public / Auth | Lấy danh sách các đợt đăng ký tín chỉ đang mở, kèm khung giờ mở cho từng khóa/khoa. |
-| `POST` | `/api/v1/enrollment-periods` | ADMIN | Thiết lập đợt mở đăng ký: thời gian bắt đầu, kết thúc và giới hạn tín chỉ tối đa/tối thiểu. |
+| `GET` | `/api/v1/enrollment-periods/current` | Public | Xem trạng thái và thời điểm mở/đóng của đợt đăng ký chung. |
+| `PUT` | `/api/v1/enrollment-periods/current` | `SYSTEM_ADMIN` | Thiết lập/cập nhật thời điểm mở và đóng trước khi đợt đăng ký bắt đầu. |
 
----
+Request minh họa:
 
-## 4. Course Classes
+```json
+{
+  "startAt": "2026-11-01T08:00:00+07:00",
+  "endAt": "2026-11-03T17:00:00+07:00"
+}
+```
 
-**Base path:**
+Không cho phép thay đổi lớp hoặc cấu hình đợt đăng ký theo cách làm sai lệch kết quả của các request đang xử lý. Quy tắc cho phép sửa thời gian sau khi đợt đăng ký đã mở cần được chốt; mặc định MVP không cho sửa trong thời gian đang mở.
 
-- `/api/v1/course-classes`
+## 5. Enrollments
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `GET` | `/api/v1/course-classes` | Public / Auth | Tra cứu danh sách lớp mở trong kỳ. Hỗ trợ filter theo `semesterId`, `courseCode`, thứ trong tuần và giảng viên. |
-| `GET` | `/api/v1/course-classes/{classId}` | Public / Auth | Xem chi tiết lớp: thời khóa biểu, phòng học, giảng viên, sĩ số hiện tại và sĩ số tối đa (`enrolledCount` / `capacity`). |
-| `POST` | `/api/v1/course-classes` | ADMIN | Tạo mới một lớp học phần kèm lịch học và phân bổ phòng. |
-| `PUT` | `/api/v1/course-classes/{classId}/status` | ADMIN | Đóng/mở lớp thủ công hoặc hủy lớp nếu không đủ sĩ số tối thiểu. |
+**Resource:** `/api/v1/enrollments`
 
----
+### 5.1. Đăng ký một hoặc nhiều lớp
 
-## 5. Enrollments & Academic Results
+`POST /api/v1/enrollments` — permission: `STUDENT`
 
-**Base paths:**
+Request nhận danh sách `classIds`, bởi một yêu cầu có thể đăng ký nhiều lớp. Mỗi lớp được xét độc lập; việc một lớp bị từ chối không hủy kết quả của các lớp còn lại.
 
-- `/api/v1/enrollments`
-- `/api/v1/schedules`
-- `/api/v1/transcripts`
+```json
+{
+  "classIds": [
+    "CLS-101",
+    "CLS-205",
+    "CLS-307"
+  ]
+}
+```
 
-| Method | Endpoint | Permission | Description |
-|---|---|---|---|
-| `POST` | `/api/v1/enrollments` | STUDENT | **Đăng ký học phần:** gửi `classId` để đăng ký vào lớp. Hệ thống kiểm tra điều kiện tiên quyết, trùng lịch và trừ slot giữ chỗ. |
-| `DELETE` | `/api/v1/enrollments/{classId}` | STUDENT | **Hủy học phần:** hủy lớp đã đăng ký trong thời gian cho phép và nhả lại slot. |
-| `GET` | `/api/v1/enrollments/my-classes` | STUDENT | Xem danh sách các lớp học phần sinh viên đã đăng ký thành công trong kỳ, kèm tổng số tín chỉ tích lũy. |
-| `GET` | `/api/v1/schedules/me` | STUDENT | Lấy thời khóa biểu tuần/tháng cá nhân dựa trên các lớp đã ghi danh. |
-| `GET` | `/api/v1/transcripts/me` | STUDENT | Xem bảng điểm tích lũy và GPA/CPA các kỳ trước. Dữ liệu được sử dụng để validate điều kiện môn tiên quyết. |
+Backend kiểm tra cho từng lớp:
+1. Đợt đăng ký chung đang mở.
+2. Lớp tồn tại và còn chỗ tại thời điểm ghi nhận đăng ký.
+3. Không trùng lịch với các lớp mà sinh viên đã đăng ký thành công.
+4. Tổng tín chỉ sau khi thêm lớp không vượt quá giới hạn cố định được cấu hình trong code.
+5. Sinh viên chưa đăng ký lớp đó trước đây.
 
----
+Không kiểm tra môn tiên quyết, giới hạn tín chỉ riêng theo sinh viên hoặc các điều kiện ngoài phạm vi MVP.
 
-## 6. API Permission Summary
+Response khi backend đã xử lý được từng mục:
 
-| Role | Scope |
+```json
+{
+  "results": [
+    {
+      "classId": "CLS-101",
+      "status": "ENROLLED",
+      "reason": null
+    },
+    {
+      "classId": "CLS-205",
+      "status": "REJECTED",
+      "reason": "CLASS_FULL"
+    },
+    {
+      "classId": "CLS-307",
+      "status": "REJECTED",
+      "reason": "SCHEDULE_CONFLICT"
+    }
+  ]
+}
+```
+
+Các giá trị `status` cho mỗi lớp:
+- `ENROLLED`: đăng ký đã được ghi nhận thành công và commit.
+- `REJECTED`: không đăng ký; `reason` phải nêu lý do rõ ràng.
+- `RETRY`: chưa có kết quả cuối cùng cho lớp này vì backend tạm thời không thể xử lý; client có thể thử lại.
+
+Các mã `reason` dự kiến gồm `CLASS_FULL`, `SCHEDULE_CONFLICT`, `CREDIT_LIMIT_EXCEEDED`, `ALREADY_ENROLLED`, `ENROLLMENT_PERIOD_CLOSED` và `CLASS_NOT_FOUND`. Có thể bổ sung mã nghiệp vụ khác nếu tài liệu và implementation được cập nhật đồng bộ.
+
+Nếu hệ thống quá tải đến mức không thể xử lý request an toàn, API có thể trả `503 Service Unavailable`, kèm thông báo có thể thử lại và `Retry-After` nếu xác định được thời gian. Không được trả thành công cho một lớp trước khi đăng ký của lớp đó đã được commit.
+
+Nếu client bị timeout hoặc không nhận được response, client phải dùng `GET /api/v1/enrollments/my-classes` để xác nhận các đăng ký đã được ghi nhận trước khi quyết định gửi lại. Việc gửi lại cùng lớp không được tạo đăng ký thứ hai.
+
+### 5.2. Hủy đăng ký
+
+`DELETE /api/v1/enrollments/{classId}` — permission: `STUDENT`
+
+Hủy đăng ký của sinh viên hiện tại cho lớp chỉ định. Chỉ được hủy khi đợt đăng ký đang mở. Khi hủy thành công, chỗ được giải phóng để sinh viên khác có thể đăng ký.
+
+API không nhận `studentId` trong path hoặc body; sinh viên được xác định từ JWT.
+
+### 5.3. Xem đăng ký của tôi
+
+`GET /api/v1/enrollments/my-classes` — permission: `STUDENT`
+
+Trả các lớp mà sinh viên hiện tại đã đăng ký thành công. Endpoint này là cách để kiểm tra kết quả sau timeout hoặc khi client không nhận được phản hồi của request đăng ký.
+
+Response minh họa:
+
+```json
+{
+  "items": [
+    {
+      "classId": "CLS-101",
+      "name": "Cơ sở dữ liệu - Nhóm 01",
+      "credits": 3,
+      "status": "ENROLLED"
+    }
+  ],
+  "totalCredits": 3
+}
+```
+
+`totalCredits` là tổng tín chỉ của các lớp hiện đang được đăng ký thành công, không phải GPA/CPA hay tín chỉ tích lũy toàn khóa.
+
+## 6. Quy ước lỗi và HTTP status
+
+Response lỗi dùng chung một cấu trúc nhất quán, ví dụ:
+
+```json
+{
+  "code": "CLASS_FULL",
+  "message": "Lớp đã đủ sức chứa.",
+  "retryable": false
+}
+```
+
+| HTTP status | Ý nghĩa dự kiến |
 |---|---|
-| `Public` | Authentication và các API tra cứu được công khai |
-| `Authenticated` | API yêu cầu người dùng đăng nhập |
-| `STUDENT` | Đăng ký/hủy học phần và xem dữ liệu học tập cá nhân |
-| `ADMIN` | Quản lý môn học, lớp học phần và đợt đăng ký |
+| `200 OK` | Truy vấn thành công hoặc request đăng ký nhiều lớp đã được xử lý và trả kết quả theo từng lớp. |
+| `201 Created` | Tạo lớp thành công. |
+| `400 Bad Request` | Request sai định dạng hoặc vi phạm validation đầu vào. |
+| `401 Unauthorized` | Thiếu hoặc không hợp lệ thông tin xác thực. |
+| `403 Forbidden` | Đã xác thực nhưng không đủ quyền. |
+| `404 Not Found` | Resource không tồn tại, khi phù hợp với endpoint. |
+| `409 Conflict` | Xung đột nghiệp vụ không được biểu diễn trong kết quả theo từng lớp. |
+| `503 Service Unavailable` | Hệ thống tạm thời không thể xử lý an toàn; client có thể thử lại theo hướng dẫn. |
 
----
+Không sử dụng `500` cho lỗi nghiệp vụ có thể xác định được. Không tuyên bố request đã thành công nếu transaction chưa commit.
 
-## 7. API Conventions
+## 7. Nguyên tắc nhất quán và tải cao điểm
 
-- Base URL sử dụng prefix `/api/v1`.
-- Resource names sử dụng dạng plural.
-- `GET` dùng cho truy vấn dữ liệu.
-- `POST` dùng cho tạo resource hoặc thực hiện operation tạo mới.
-- `PUT` dùng cho cập nhật resource.
-- `DELETE` dùng cho xóa/hủy resource.
-- Các API yêu cầu đăng nhập sử dụng JWT Bearer Authentication.
-- Identity của người dùng được xác định từ JWT, không lấy `studentId` từ request body khi đã có authenticated context.
-- API không trả trực tiếp JPA Entity.
-- Request/Response sử dụng DTO riêng cho API contract.
+Các quy tắc sau là yêu cầu bắt buộc đối với implementation, không chỉ là chi tiết giao diện API:
+
+- **Không vượt sức chứa:** nhiều request tranh chỗ cuối cùng không được khiến số đăng ký thành công vượt `capacity`.
+- **Không mất đăng ký:** chỉ trả `ENROLLED` sau khi dữ liệu đã commit bền vững.
+- **Không đăng ký trùng:** gửi lại request hoặc bấm hai lần không tạo nhiều đăng ký cho cùng một sinh viên/lớp.
+- **Kết quả rõ ràng:** mỗi lớp có kết quả cuối cùng hoặc được đánh dấu cần thử lại; lỗi hệ thống không được giả làm kết quả thành công.
+- **Suy giảm an toàn:** khi quá tải, trả lỗi retryable hoặc `503` thay vì bỏ qua các bảo đảm trên.
+
+Các endpoint đăng ký phải được kiểm thử với request đồng thời; việc chỉ kiểm tra số chỗ trước khi insert không đủ để đảm bảo tính đúng đắn.
+
+## 8. Quy ước API chung
+
+- Base path: `/api/v1`.
+- Resource dùng tên số nhiều, ngoại trừ các endpoint đại diện cho tài nguyên singleton như `current`.
+- Dùng DTO riêng cho request/response; không trả trực tiếp JPA Entity.
+- Endpoint yêu cầu đăng nhập dùng JWT Bearer Authentication.
+- Không tin `studentId`/`userId` do client gửi để xác định chủ sở hữu đăng ký.
+- Thời gian truyền qua API phải có timezone/offset rõ ràng.
+- Mọi thay đổi API phải được phản ánh đồng thời trong controller, DTO, OpenAPI và tài liệu này.
