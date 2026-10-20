@@ -4,10 +4,12 @@ import com.course_registration_system.business.user.StudentRepository;
 import com.course_registration_system.business.user.model.Student;
 import com.course_registration_system.data.entity.StudentEntity;
 import com.course_registration_system.data.repository.JpaStudentRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class StudentRepositoryAdapter implements StudentRepository {
 	private final JpaStudentRepository repository;
 

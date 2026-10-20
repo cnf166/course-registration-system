@@ -1,15 +1,15 @@
 package com.course_registration_system.data.repository.adapter;
 
 import com.course_registration_system.business.user.SystemAdminRepository;
-import com.course_registration_system.business.user.model.Student;
 import com.course_registration_system.business.user.model.SystemAdmin;
-import com.course_registration_system.data.entity.StudentEntity;
 import com.course_registration_system.data.entity.SystemAdminEntity;
 import com.course_registration_system.data.repository.JpaSystemAdminRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public class SystemAdminRepositoryAdapter implements SystemAdminRepository {
 	private final JpaSystemAdminRepository repository;
 
