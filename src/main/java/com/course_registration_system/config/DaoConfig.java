@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thingai.base.dao.Dao;
+import org.thingai.base.log.ILog;
 import org.thingai.platform.dao.DaoSqlite;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+// Consider use --enable-native-access=ALL-UNNAMED, due to SQLite JDBC run native C and load with System.load
 @Configuration
 public class DaoConfig {
 
@@ -34,6 +36,8 @@ public class DaoConfig {
 	 */
 	@Bean(destroyMethod = "close")
 	public Dao dao(@Value("${dao.sqlite.path}") String dbPath) {
+		initDaoLog();
+
 		// SQLite creates the db file but not its parent folder
 		Path parent = Path.of(dbPath).toAbsolutePath().getParent();
 		try {
@@ -45,5 +49,10 @@ public class DaoConfig {
 		DaoSqlite dao = new DaoSqlite(dbPath);
 		dao.initDao(DAO_ENTITIES);
 		return dao;
+	}
+
+	private void initDaoLog() {
+		ILog.LOG_LEVEL = ILog.DEBUG;
+		ILog.ENABLE_LOGGING = true;
 	}
 }
