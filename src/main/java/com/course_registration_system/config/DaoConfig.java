@@ -21,7 +21,6 @@ import java.nio.file.Path;
 @Configuration
 public class DaoConfig {
 
-	// @DaoTable classes whose tables DaoSqlite creates/migrates on startup
 	private static final Class<?>[] DAO_ENTITIES = {
 			UserEntity.class,
 			ClassCourseEntity.class,
