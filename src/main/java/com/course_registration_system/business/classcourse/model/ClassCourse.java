@@ -1,4 +1,4 @@
-package com.course_registration_system.business.courseclass.model;
+package com.course_registration_system.business.classcourse.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,19 +7,16 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CourseClass {
+public class ClassCourse {
 	private String id;
-	private String courseCode;
-	private UUID semesterId;
-	private String section;
-	private List<ScheduleSlot> schedule;
-	private String room;
+	private String name;
+	private int credits;
 	private int capacity;
+	private List<ScheduleSlot> schedule;
 	private Instant createdAt;
 }

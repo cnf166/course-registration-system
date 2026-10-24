@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Schema(description = "Full details of a course class")
-public record CourseClassDetailResponse(
+public record ClassCourseDetailResponse(
         @Schema(description = "Class ID", example = "INT3105 1")
         String classId,
 

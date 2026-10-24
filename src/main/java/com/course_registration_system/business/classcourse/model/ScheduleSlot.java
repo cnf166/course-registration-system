@@ -1,7 +1,5 @@
-package com.course_registration_system.business.courseclass.model;
+package com.course_registration_system.business.classcourse.model;
 
-import java.time.DayOfWeek;
-
-// One weekly session. Null day or shift means the class has no fixed day or shift.
-public record ScheduleSlot(DayOfWeek day, Integer shift) {
+// One weekly session; dayOfWeek as in data/define/Day.java, shift as in data/define/DayShift.java.
+public record ScheduleSlot(int dayOfWeek, int shift) {
 }

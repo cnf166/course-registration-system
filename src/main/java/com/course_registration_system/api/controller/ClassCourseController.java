@@ -1,9 +1,9 @@
 package com.course_registration_system.api.controller;
 
-import com.course_registration_system.api.dto.request.CreateCourseClassRequest;
+import com.course_registration_system.api.dto.request.CreateClassCourseRequest;
 import com.course_registration_system.api.dto.request.UpdateClassStatusRequest;
-import com.course_registration_system.api.dto.response.CourseClassDetailResponse;
-import com.course_registration_system.api.dto.response.CourseClassSummaryResponse;
+import com.course_registration_system.api.dto.response.ClassCourseDetailResponse;
+import com.course_registration_system.api.dto.response.ClassCourseSummaryResponse;
 import com.course_registration_system.api.dto.response.PageResponse;
 import com.course_registration_system.api.error.ApiNotImplementedException;
 import com.course_registration_system.api.error.ErrorResponse;
@@ -32,7 +32,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/course-classes")
 @Tag(name = "Course Classes", description = "Classes open for registration and class management")
-public class CourseClassController {
+public class ClassCourseController {
 
     @GetMapping
     @Operation(
@@ -43,7 +43,7 @@ public class CourseClassController {
     @ApiResponse(responseCode = "200", description = "A page of classes")
     @ApiResponse(responseCode = "400", description = "A query parameter is invalid",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    public ResponseEntity<PageResponse<CourseClassSummaryResponse>> searchCourseClasses(
+    public ResponseEntity<PageResponse<ClassCourseSummaryResponse>> searchClassCoursees(
             @Parameter(description = "Semester to search in; defaults to the current semester")
             @RequestParam(required = false) UUID semesterId,
             @Parameter(description = "Filter by course code", example = "INT3105")
@@ -67,7 +67,7 @@ public class CourseClassController {
     @ApiResponse(responseCode = "200", description = "Class details")
     @ApiResponse(responseCode = "404", description = "Class not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    public ResponseEntity<CourseClassDetailResponse> getCourseClass(
+    public ResponseEntity<ClassCourseDetailResponse> getClassCourse(
             @Parameter(description = "Class ID", example = "INT3105 1")
             @PathVariable String classId) {
         throw new ApiNotImplementedException();
@@ -88,8 +88,8 @@ public class CourseClassController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "409", description = "A class with this ID already exists",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    public ResponseEntity<CourseClassDetailResponse> createCourseClass(
-            @Valid @RequestBody CreateCourseClassRequest request) {
+    public ResponseEntity<ClassCourseDetailResponse> createClassCourse(
+            @Valid @RequestBody CreateClassCourseRequest request) {
         throw new ApiNotImplementedException();
     }
 
@@ -110,7 +110,7 @@ public class CourseClassController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "409", description = "The status change is not allowed for this class",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    public ResponseEntity<CourseClassDetailResponse> updateClassStatus(
+    public ResponseEntity<ClassCourseDetailResponse> updateClassStatus(
             @Parameter(description = "Class ID", example = "INT3105 1")
             @PathVariable String classId,
             @Valid @RequestBody UpdateClassStatusRequest request) {

@@ -1,34 +1,23 @@
-package com.course_registration_system.business.semester;
+package com.course_registration_system.business.enrollmentperiod;
 
-import com.course_registration_system.business.semester.model.EnrollmentPeriod;
-import com.course_registration_system.business.semester.model.Semester;
+import com.course_registration_system.business.enrollmentperiod.model.EnrollmentPeriod;
 
 import java.time.Clock;
-import java.util.List;
 
-public class SemesterService {
-
-	private final SemesterRepository semesterRepository;
+public class EnrollmentPeriodService {
 	private final EnrollmentPeriodRepository enrollmentPeriodRepository;
 	private final Clock clock;
 
-	public SemesterService(SemesterRepository semesterRepository,
-						   EnrollmentPeriodRepository enrollmentPeriodRepository,
-						   Clock clock) {
-		this.semesterRepository = semesterRepository;
+	public EnrollmentPeriodService(EnrollmentPeriodRepository enrollmentPeriodRepository, Clock clock) {
 		this.enrollmentPeriodRepository = enrollmentPeriodRepository;
 		this.clock = clock;
 	}
 
-	public Semester getCurrent() {
+	public EnrollmentPeriod getCurrent() {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	public List<EnrollmentPeriod> getActivePeriods() {
-		throw new UnsupportedOperationException("Not implemented yet");
-	}
-
-	public EnrollmentPeriod createPeriod(EnrollmentPeriod period) {
+	public EnrollmentPeriod update(EnrollmentPeriod period) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

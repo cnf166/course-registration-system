@@ -1,28 +1,25 @@
-package com.course_registration_system.business.courseclass;
+package com.course_registration_system.business.classcourse;
 
-import com.course_registration_system.business.courseclass.model.CourseClass;
+import com.course_registration_system.business.classcourse.model.ClassCourse;
 
-import java.time.DayOfWeek;
 import java.util.List;
-import java.util.UUID;
 
-public class CourseClassService {
+public class ClassCourseService {
+	private final ClassCourseRepository classCourseRepository;
 
-	private final CourseClassRepository courseClassRepository;
-
-	public CourseClassService(CourseClassRepository courseClassRepository) {
-		this.courseClassRepository = courseClassRepository;
+	public ClassCourseService(ClassCourseRepository classCourseRepository) {
+		this.classCourseRepository = classCourseRepository;
 	}
 
-	public CourseClass get(String classId) {
+	public ClassCourse get(String classId) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	public List<CourseClass> listBySemester(UUID semesterId, String courseCode, DayOfWeek day) {
+	public List<ClassCourse> list() {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	public CourseClass create(CourseClass courseClass) {
+	public ClassCourse create(ClassCourse classCourse) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

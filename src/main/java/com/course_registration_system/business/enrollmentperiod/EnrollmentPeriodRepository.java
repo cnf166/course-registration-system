@@ -1,11 +1,12 @@
-package com.course_registration_system.business.semester;
+package com.course_registration_system.business.enrollmentperiod;
 
-import com.course_registration_system.business.semester.model.EnrollmentPeriod;
+import com.course_registration_system.business.enrollmentperiod.model.EnrollmentPeriod;
 
-import java.time.Instant;
-import java.util.List;
+import java.util.Optional;
 
 public interface EnrollmentPeriodRepository {
-	List<EnrollmentPeriod> findActiveAt(Instant instant);
+	// Empty until an admin sets the period for the first time.
+	Optional<EnrollmentPeriod> findCurrent();
+
 	EnrollmentPeriod save(EnrollmentPeriod period);
 }
