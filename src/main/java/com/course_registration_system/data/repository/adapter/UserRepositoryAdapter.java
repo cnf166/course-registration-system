@@ -3,64 +3,71 @@ package com.course_registration_system.data.repository.adapter;
 import com.course_registration_system.business.user.UserRepository;
 import com.course_registration_system.business.user.model.User;
 import com.course_registration_system.data.entity.UserEntity;
-import com.course_registration_system.data.repository.JpaUserRepository;
 import org.springframework.stereotype.Repository;
+import org.thingai.base.dao.Dao;
 
 import java.util.Optional;
-import java.util.UUID;
+
+import static com.course_registration_system.utils.TimeUtils.fromDbString;
+import static com.course_registration_system.utils.TimeUtils.toDbString;
 
 @Repository
 public class UserRepositoryAdapter implements UserRepository {
+	private final Dao dao;
 
-	private final JpaUserRepository repository;
-
-	public UserRepositoryAdapter(JpaUserRepository repository) {
-		this.repository = repository;
+	public UserRepositoryAdapter(Dao dao) {
+		this.dao = dao;
 	}
 
 	@Override
-	public Optional<User> findById(UUID id) {
-		return repository.findById(id)
-				.map(this::toBusinessModel);
+	public Optional<User> findById(String id) {
+		return findOneBy("id", id);
 	}
 
 	@Override
-	public Optional<User> findByEmail(String email) {
-		return repository.findByEmail(email)
-				.map(this::toBusinessModel);
+	public Optional<User> findByUsername(String username) {
+		return findOneBy("username", username);
+	}
+
+	@Override
+	public boolean existsByUsername(String username) {
+		return findByUsername(username).isPresent();
 	}
 
 	@Override
 	public User save(User user) {
 		UserEntity entity = toEntity(user);
-		UserEntity savedEntity = repository.save(entity);
-		// user (param tu business) --> chuyen thanh entity (infra) --> return lai duoi dang Model (business)
-		return toBusinessModel(savedEntity);
+		dao.insertOrUpdate(entity);
+		return toBusinessModel(entity);
 	}
 
-	// chuyen tu entity (infra/persistence layer --> business)
+	private Optional<User> findOneBy(String column, String value) {
+		UserEntity[] rows = dao.query(UserEntity.class, column, value);
+		return rows.length == 0 ? Optional.empty() : Optional.of(toBusinessModel(rows[0]));
+	}
+
 	private User toBusinessModel(UserEntity entity) {
 		return new User(
 				entity.getId(),
+				entity.getUsername(),
 				entity.getName(),
-				entity.getEmail(),
 				entity.getPasswordHash(),
 				entity.getRole(),
-				entity.getCreatedAt()
+				fromDbString(entity.getCreatedAt())
 		);
 	}
 
-	// chuyen tu model (business layer --> infra)
 	private UserEntity toEntity(User user) {
+		// a new user has no id yet, so keep the one the entity generated
 		UserEntity entity = new UserEntity();
-
-		entity.setId(user.getId());
+		if (user.getId() != null) {
+			entity.setId(user.getId());
+		}
+		entity.setUsername(user.getUsername());
 		entity.setName(user.getName());
-		entity.setEmail(user.getEmail());
 		entity.setPasswordHash(user.getPasswordHash());
 		entity.setRole(user.getRole());
-		entity.setCreatedAt(user.getCreatedAt());
-
+		entity.setCreatedAt(toDbString(user.getCreatedAt()));
 		return entity;
 	}
 }

@@ -34,4 +34,49 @@ Key architecture characteristics:
 
 ## Tasks
 
-To be discussed.
+| Task | Lead | With |
+|---|---|---|
+| 1. Problem statement and business specification | Vinh | Whole team (meeting) |
+| 2. User flows | Việt | Reviewed by Vinh |
+| 3. Revised API spec and code alignment | Việt Anh | — |
+
+### Task 1 — Problem statement and business specification (Vinh)
+
+**Deadline:** Tue 2026-10-20, 09:00
+
+Vinh drafts the document up front; the team meeting confirms it rather than writing it from scratch.
+
+**Scope**
+
+- Problem statement: who has the problem, what goes wrong at registration time, what the system must guarantee, and what is out of scope.
+- Business specification: actors, use cases, business rules and constraints for registration.
+
+**Definition of done**
+
+- The team has confirmed the draft in the meeting.
+- The document is merged into `develop`.
+
+### Task 2 — User flows (Việt)
+
+**Scope**
+
+- One user flow per use case in the business specification, written in Mermaid.
+
+**Definition of done**
+
+- Every use case in the business specification has a flow.
+- Reviewed by Vinh and merged into `develop`.
+
+### Task 3 — Revised API spec and code alignment (Việt Anh)
+
+**Scope**
+
+- Cut the API spec to the endpoints the user flows need.
+- Give every endpoint one permission; no merged "Public / Auth".
+- Remove or defer the endpoints, DTOs and entities that fall out of scope.
+
+**Definition of done**
+
+- The revised API spec and code are merged into `develop`.
+- Every endpoint in the spec is used by at least one user flow.
+- Swagger UI matches the revised spec.

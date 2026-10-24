@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Schema(description = "Data of a new course class, with its schedule and room")
-public record CreateCourseClassRequest(
+public record CreateClassCourseRequest(
         @Schema(description = "Class ID, assigned by the admin and unique", example = "INT3105 1")
         @NotBlank
         String classId,

@@ -1,38 +1,34 @@
 package com.course_registration_system.data.entity;
 
-import jakarta.persistence.*;
+import com.course_registration_system.utils.IdUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
+import org.thingai.base.dao.annotations.DaoColumn;
+import org.thingai.base.dao.annotations.DaoTable;
 
-import java.time.Instant;
-import java.util.UUID;
-
-@Entity
-@Table(name = "users") // "user" is reserved in PostgreSQL
+@DaoTable(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 public class UserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "user_id")
-    private UUID id;
+    @DaoColumn(name = "id", primaryKey = true)
+    private String id = IdUtils.generateUuid(); // overwritten by the stored id when read from the DB
 
-    @Column(nullable = false)
+    // student code for students
+    @DaoColumn(name = "username", nullable = false, unique = true)
+    private String username;
+
+    @DaoColumn(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "password_hash", nullable = false)
+    @DaoColumn(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(nullable = false)
-    private int role;
+    // as in define/UserRole.java
+    @DaoColumn(name = "role", nullable = false)
+    private Integer role;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+    @DaoColumn(name = "created_at", nullable = false)
+    private String createdAt; // ISO-8601 UTC
 }

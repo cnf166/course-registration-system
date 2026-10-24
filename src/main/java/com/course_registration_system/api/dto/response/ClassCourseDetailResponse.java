@@ -2,11 +2,12 @@ package com.course_registration_system.api.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@Schema(description = "Course class as shown in the class list")
-public record CourseClassSummaryResponse(
+@Schema(description = "Full details of a course class")
+public record ClassCourseDetailResponse(
         @Schema(description = "Class ID", example = "INT3105 1")
         String classId,
 
@@ -15,6 +16,9 @@ public record CourseClassSummaryResponse(
 
         @Schema(description = "Title of the course", example = "Software Architecture")
         String courseTitle,
+
+        @Schema(description = "Number of credits of the course", example = "3")
+        int credits,
 
         @Schema(description = "Section label", example = "01", nullable = true)
         String section,
@@ -39,6 +43,9 @@ public record CourseClassSummaryResponse(
 
         @Schema(description = "[NOT BACKED] Status of the class. Not stored yet.",
                 allowableValues = {"OPEN", "CLOSED", "CANCELLED"}, nullable = true)
-        String status
+        String status,
+
+        @Schema(description = "When the class was created (UTC)")
+        Instant createdAt
 ) {
 }

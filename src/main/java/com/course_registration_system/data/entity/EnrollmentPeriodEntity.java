@@ -1,37 +1,28 @@
 package com.course_registration_system.data.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.thingai.base.dao.annotations.DaoColumn;
+import org.thingai.base.dao.annotations.DaoTable;
 
-import java.time.Instant;
-import java.util.UUID;
-
-@Entity
-@Table(name = "enrollment_period")
+@DaoTable(name = "enrollment_period")
 @Getter
 @Setter
 @NoArgsConstructor
 public class EnrollmentPeriodEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "period_id")
-    private UUID id;
+    // single shared period for all students, so the table holds only this row
+    public static final String CURRENT_ID = "current";
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "semester_id", nullable = false)
-    private SemesterEntity semester;
+    @DaoColumn(name = "id", primaryKey = true)
+    private String id;
 
-    @Column(name = "start_at", nullable = false)
-    private Instant startAt;
+    @DaoColumn(name = "start_at", nullable = false)
+    private String startAt; // ISO-8601 UTC, inclusive
 
-    @Column(name = "end_at", nullable = false)
-    private Instant endAt;
+    @DaoColumn(name = "end_at", nullable = false)
+    private String endAt; // ISO-8601 UTC, exclusive
 
-    @Column(name = "min_credits", nullable = false)
-    private int minCredits;
-
-    @Column(name = "max_credits", nullable = false)
-    private int maxCredits;
+    @DaoColumn(name = "updated_at", nullable = false)
+    private String updatedAt; // ISO-8601 UTC
 }
