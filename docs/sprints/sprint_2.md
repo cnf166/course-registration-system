@@ -1,6 +1,6 @@
 # Sprint 2 — Services, Endpoints and Load Test Plan
 
-**Duration:** TBD
+**Duration:** From end of sprint 1.5 to 2026-10-26
 
 **Goal:** make the MVP work end to end and correct under concurrent requests: every endpoint in the [API specs](../specs/api-specs.md) runs real business logic on the SQLite persistence layer, and registration never overbooks a class or creates a duplicate enrollment. In parallel, the team agrees on how the system will be load tested, so the environment can be built in the next sprint.
 
@@ -23,11 +23,10 @@ References: [Sprint 1.5](sprint_1.5.md), [API specs](../specs/api-specs.md), [ar
 
 ## Tasks
 
-| Task | Lead | With |
-|---|---|---|
-| 1. Services | TBD | — |
-| 2. API endpoints and security | TBD | — |
-| 3. Load test plan (discussion) | TBD | Whole team (meeting) |
+| Task | Lead     | With |
+|---|----------|---|
+| 1. Services | Việt Anh | — |
+| 2. API endpoints and security | Việt     | — |
 
 ### Task 1 — Services
 

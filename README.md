@@ -35,7 +35,7 @@ Deployment, backup and operations: [DEPLOYMENT.md](.github/DEPLOYMENT.md).
 
 | Document | Description |
 |----------|-------------|
-| [Problem Statement](docs/requirements/problem_statement.md) ([vi](docs/requirements/problem_statement.vi.md)) | Problem statement |
+| [Problem Statement](docs/requirements/problem_statement.md) | Problem statement |
 | [Business Specification](docs/requirements/business_specs.md) | Business rules |
 | [Userflow](docs/requirements/userflow.md) | User flows |
 | [Architecture](docs/specs/architecture.md) | Project structure and dependency rules |

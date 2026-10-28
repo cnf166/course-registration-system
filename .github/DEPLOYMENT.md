@@ -25,10 +25,7 @@ client ──:80──▶ nginx ──:8080──▶ app (Spring Boot, JRE 21) �
 ## Prerequisites
 
 - Docker Engine 23+ (BuildKit is required for the `--mount=type=cache` build step)
-- Docker Compose v2 (`docker compose`, not `docker-compose`)
-- Host port 80 free
-
-No local JDK or Maven is needed; the build runs inside the JDK image.
+- Docker Compose (`docker compose`, not `docker-compose`)
 
 ## Configuration
 
@@ -114,5 +111,6 @@ docker compose start app
 
 ## Notes
 
+- The build step do cache the dependencies. If need a clean build, run `docker compose build --no-cache`, this should be helpful.
 - Tests are skipped in the image build (`-DskipTests`); run `./mvnw test` locally or in CI before deploying.
 - nginx serves plain HTTP only. To add TLS, mount certificates into the `nginx` service, add a `listen 443 ssl` server block in `nginx/default.conf`, and publish `443:443`.
