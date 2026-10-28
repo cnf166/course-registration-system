@@ -1,0 +1,12 @@
+target/
+data/
+.git/
+.github/
+.idea/
+.vscode/
+docs/
+nginx/
+.env
+*.iml
+Dockerfile
+docker-compose.yml
