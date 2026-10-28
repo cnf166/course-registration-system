@@ -1,6 +1,7 @@
 package com.course_registration_system.api.error;
 
 import com.course_registration_system.business.exception.ConflictException;
+import com.course_registration_system.business.exception.InvalidInputException;
 import com.course_registration_system.business.exception.NotFoundException;
 import com.course_registration_system.business.exception.RuleViolationException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), false, request, List.of());
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInput(InvalidInputException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", ex.getMessage(), false, request, List.of());
     }
 
     @ExceptionHandler(RuleViolationException.class)
