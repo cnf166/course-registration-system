@@ -120,7 +120,9 @@ public class EnrollmentService {
         Instant now = clock.instant();
         Optional<EnrollmentPeriod> periodOpt = enrollmentPeriodRepository.findCurrent();
         if (periodOpt.isEmpty() || !isPeriodOpen(periodOpt.get(), now)) {
-            throw new RuleViolationException(EnrollResult.ENROLLMENT_PERIOD_CLOSED);
+            throw new RuleViolationException(
+                    EnrollResult.ENROLLMENT_PERIOD_CLOSED,
+                    "Enrollment period is currently closed");
         }
 
         Enrollment enrollment = enrollmentRepository

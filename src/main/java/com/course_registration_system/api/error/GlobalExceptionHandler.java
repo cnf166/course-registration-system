@@ -1,5 +1,6 @@
 package com.course_registration_system.api.error;
 
+import com.course_registration_system.business.exception.BusinessException;
 import com.course_registration_system.business.exception.ConflictException;
 import com.course_registration_system.business.exception.InvalidInputException;
 import com.course_registration_system.business.exception.NotFoundException;
@@ -23,22 +24,27 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex, HttpServletRequest request) {
-        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), false, request, List.of());
+        return build(HttpStatus.NOT_FOUND, ex.getCode(), ex.getMessage(), false, request, List.of());
     }
 
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity<ErrorResponse> handleInvalidInput(InvalidInputException ex, HttpServletRequest request) {
-        return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", ex.getMessage(), false, request, List.of());
+        return build(HttpStatus.BAD_REQUEST, ex.getCode(), ex.getMessage(), false, request, List.of());
     }
 
     @ExceptionHandler(RuleViolationException.class)
     public ResponseEntity<ErrorResponse> handleRuleViolation(RuleViolationException ex, HttpServletRequest request) {
-        return build(HttpStatus.CONFLICT, ex.getMessage(), ex.getMessage(), false, request, List.of());
+        return build(HttpStatus.CONFLICT, ex.getCode(), ex.getMessage(), false, request, List.of());
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest request) {
-        return build(HttpStatus.CONFLICT, ex.getMessage(), ex.getMessage(), false, request, List.of());
+        return build(HttpStatus.CONFLICT, ex.getCode(), ex.getMessage(), false, request, List.of());
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getCode(), ex.getMessage(), false, request, List.of());
     }
 
     @ExceptionHandler(ApiNotImplementedException.class)
