@@ -25,6 +25,6 @@ public record ClassCourseDetailResponse(
         int availableSeats,
 
         @Schema(description = "Weekly sessions of the class")
-        List<ScheduleSlot> schedule
+        List<ScheduleSlotDto> schedule
 ) {
 }

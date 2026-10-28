@@ -1,6 +1,6 @@
 package com.course_registration_system.api.dto.request;
 
-import com.course_registration_system.api.dto.response.ScheduleSlot;
+import com.course_registration_system.api.dto.response.ScheduleSlotDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -28,6 +28,6 @@ public record CreateClassCourseRequest(
 
         @Schema(description = "Weekly sessions of the class; at least one slot required")
         @NotEmpty
-        List<@Valid @NotNull ScheduleSlot> schedule
+        List<@Valid @NotNull ScheduleSlotDto> schedule
 ) {
 }

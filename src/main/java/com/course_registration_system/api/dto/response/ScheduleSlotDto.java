@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 @Schema(description = "One weekly session of a class: a day of the week paired with a shift")
-public record ScheduleSlot(
+public record ScheduleSlotDto(
         @Schema(description = "Day of the week (1=Sunday, 2=Monday, … 7=Saturday)", example = "2",
                 minimum = "1", maximum = "7")
         @Min(1) @Max(7)

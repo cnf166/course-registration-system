@@ -3,9 +3,10 @@ package com.course_registration_system.api.mapper;
 import com.course_registration_system.api.dto.request.CreateClassCourseRequest;
 import com.course_registration_system.api.dto.response.ClassCourseDetailResponse;
 import com.course_registration_system.api.dto.response.ClassCourseSummaryResponse;
-import com.course_registration_system.api.dto.response.ScheduleSlot;
+import com.course_registration_system.api.dto.response.ScheduleSlotDto;
 import com.course_registration_system.business.classcourse.model.ClassCourse;
 import com.course_registration_system.business.classcourse.model.ClassCourseWithStats;
+import com.course_registration_system.business.classcourse.model.ScheduleSlot;
 
 import java.util.List;
 
@@ -17,10 +18,10 @@ public final class ClassCourseMapper {
         if (request == null) {
             return null;
         }
-        List<com.course_registration_system.business.classcourse.model.ScheduleSlot> domainSlots = null;
+        List<ScheduleSlot> domainSlots = null;
         if (request.schedule() != null) {
             domainSlots = request.schedule().stream()
-                    .map(s -> s == null ? null : new com.course_registration_system.business.classcourse.model.ScheduleSlot(s.dayOfWeek(), s.shift()))
+                    .map(s -> s == null ? null : new ScheduleSlot(s.dayOfWeek(), s.shift()))
                     .toList();
         }
         return new ClassCourse(
@@ -81,13 +82,13 @@ public final class ClassCourseMapper {
                 .toList();
     }
 
-    private static List<ScheduleSlot> toDtoSlots(List<com.course_registration_system.business.classcourse.model.ScheduleSlot> slots) {
+    private static List<ScheduleSlotDto> toDtoSlots(List<ScheduleSlot> slots) {
         if (slots == null) {
             return List.of();
         }
         return slots.stream()
                 .filter(s -> s != null)
-                .map(s -> new ScheduleSlot(s.dayOfWeek(), s.shift()))
+                .map(s -> new ScheduleSlotDto(s.dayOfWeek(), s.shift()))
                 .toList();
     }
 }
