@@ -3,8 +3,11 @@ package com.course_registration_system.api.controller;
 import com.course_registration_system.api.dto.request.CreateClassCourseRequest;
 import com.course_registration_system.api.dto.response.ClassCourseDetailResponse;
 import com.course_registration_system.api.dto.response.ClassCourseSummaryResponse;
-import com.course_registration_system.api.error.ApiNotImplementedException;
 import com.course_registration_system.api.error.ErrorResponse;
+import com.course_registration_system.api.mapper.ClassCourseMapper;
+import com.course_registration_system.business.classcourse.ClassCourseService;
+import com.course_registration_system.business.classcourse.model.ClassCourse;
+import com.course_registration_system.business.classcourse.model.ClassCourseWithStats;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,12 +26,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/course-classes")
 @Tag(name = "Course Classes", description = "Classes open for registration and class management")
 public class ClassCourseController {
+
+    private final ClassCourseService classCourseService;
+
+    public ClassCourseController(ClassCourseService classCourseService) {
+        this.classCourseService = classCourseService;
+    }
 
     @GetMapping
     @Operation(
@@ -42,7 +52,11 @@ public class ClassCourseController {
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @Parameter(description = "Page size (1 to 100)")
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-        throw new ApiNotImplementedException();
+        List<ClassCourseWithStats> all = classCourseService.list();
+        int fromIndex = Math.min(page * size, all.size());
+        int toIndex = Math.min(fromIndex + size, all.size());
+        List<ClassCourseWithStats> paged = all.subList(fromIndex, toIndex);
+        return ResponseEntity.ok(ClassCourseMapper.toSummaryResponseList(paged));
     }
 
     @GetMapping("/{classId}")
@@ -55,7 +69,8 @@ public class ClassCourseController {
     public ResponseEntity<ClassCourseDetailResponse> getClass(
             @Parameter(description = "System-generated class ID")
             @PathVariable String classId) {
-        throw new ApiNotImplementedException();
+        ClassCourseWithStats stats = classCourseService.get(classId);
+        return ResponseEntity.ok(ClassCourseMapper.toDetailResponse(stats));
     }
 
     @PostMapping
@@ -71,6 +86,8 @@ public class ClassCourseController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<ClassCourseDetailResponse> createClassCourse(
             @Valid @RequestBody CreateClassCourseRequest request) {
-        throw new ApiNotImplementedException();
+        ClassCourse created = classCourseService.create(ClassCourseMapper.toModel(request));
+        URI location = URI.create("/api/v1/course-classes/" + created.getId());
+        return ResponseEntity.created(location).body(ClassCourseMapper.toDetailResponse(created, 0));
     }
 }
