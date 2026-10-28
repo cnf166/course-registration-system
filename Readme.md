@@ -21,15 +21,14 @@ System Admin quản lý:
 
 ## Tech Stack
 
-- Java
+- Java 21
 - Spring Boot
-- Spring Data JPA
-- Hibernate
-- PostgreSQL
+- SQLite (qua `DaoSqlite` trong `libs/`)
 - Spring Security
 - JWT
 - Maven
 - OpenAPI / Swagger
+- Docker / Docker Compose, nginx
 
 ## Project Structure
 
@@ -44,6 +43,7 @@ src/
 │   │           ├── data/
 │   │           ├── security/
 │   │           ├── config/
+│   │           ├── utils/
 │   │           └── SoftwareArchitectApplication.java
 │   │
 │   └── resources/
@@ -57,28 +57,23 @@ Chi tiết về cấu trúc và dependency rules:
 
 API contract:
 
-- [Đặc tả API](docs/specs/api-specification.md)
+- [Đặc tả API](docs/specs/api-specs.md)
 
 ## Requirements
 
-- Java
-- Maven
-- PostgreSQL
+- Java 21
+- Maven (hoặc dùng Maven Wrapper `./mvnw`)
+- Docker và Docker Compose v2 (nếu deploy bằng container)
 
 ## Configuration
 
-Project sử dụng environment variables cho các thông tin cấu hình nhạy cảm.
+Project sử dụng environment variables cho cấu hình (xem `.env.example`).
 
-Các cấu hình chính:
+| Biến              | Mặc định        | Mô tả                                 |
+|-------------------|-----------------|---------------------------------------|
+| `DAO_SQLITE_PATH` | `./data/app.db` | File SQLite database dùng bởi `DaoSqlite` |
 
-```text
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-JWT_SECRET
-```
-
-Không commit database credentials hoặc secrets vào repository.
+Thư mục `data/` không được commit. Không commit secrets vào repository.
 
 ## Run the Application
 
@@ -97,8 +92,20 @@ Build project:
 Chạy file JAR sau khi build:
 
 ```bash
-java -jar target/<application>.jar
+java --enable-native-access=ALL-UNNAMED -jar target/software-architect-0.0.1-SNAPSHOT.jar
 ```
+
+## Run with Docker
+
+Build image và chạy app sau nginx (port 80), database được lưu ở `./data` trên host:
+
+```bash
+docker compose up -d --build
+```
+
+Chi tiết về setup, deploy, backup và vận hành:
+
+- [Deployment](.github/DEPLOYMENT.md)
 
 ## API Documentation
 
@@ -110,10 +117,10 @@ Sau khi application chạy, Swagger UI có thể được sử dụng để xem 
 
 Các thay đổi về code cần tuân theo kiến trúc được mô tả trong:
 
-- [Kiến trúc hệ thống](docs/architecture.md)
-- [Đặc tả API](docs/api-specification.md)
+- [Kiến trúc hệ thống](docs/specs/architecture.md)
+- [Đặc tả API](docs/specs/api-specs.md)
 
-Business Layer không phụ thuộc vào Spring, JPA, Hibernate hoặc PostgreSQL.
+Business Layer không phụ thuộc vào Spring hoặc tầng lưu trữ dữ liệu (SQLite / `DaoSqlite`).
 
 ## Git Workflow
 
