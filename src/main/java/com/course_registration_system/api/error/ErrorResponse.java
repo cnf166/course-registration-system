@@ -16,8 +16,14 @@ public record ErrorResponse(
         @Schema(description = "HTTP reason phrase", example = "Bad Request")
         String error,
 
-        @Schema(description = "Human-readable explanation of the error", example = "Validation failed")
+        @Schema(description = "Machine-readable error code", example = "CLASS_FULL")
+        String code,
+
+        @Schema(description = "Human-readable explanation of the error", example = "Class is full")
         String message,
+
+        @Schema(description = "Whether the client may safely retry this request", example = "false")
+        boolean retryable,
 
         @Schema(description = "Request path that caused the error", example = "/api/v1/enrollments")
         String path,
@@ -36,12 +42,16 @@ public record ErrorResponse(
     ) {
     }
 
-    public static ErrorResponse of(int status, String error, String message, String path) {
-        return new ErrorResponse(Instant.now(), status, error, message, path, List.of());
+    public static ErrorResponse of(int status, String error, String code, String message, String path) {
+        return new ErrorResponse(Instant.now(), status, error, code, message, false, path, List.of());
     }
 
-    public static ErrorResponse of(int status, String error, String message, String path,
+    public static ErrorResponse of(int status, String error, String code, String message, String path,
                                    List<FieldError> fieldErrors) {
-        return new ErrorResponse(Instant.now(), status, error, message, path, fieldErrors);
+        return new ErrorResponse(Instant.now(), status, error, code, message, false, path, fieldErrors);
+    }
+
+    public static ErrorResponse retryable(int status, String error, String code, String message, String path) {
+        return new ErrorResponse(Instant.now(), status, error, code, message, true, path, List.of());
     }
 }

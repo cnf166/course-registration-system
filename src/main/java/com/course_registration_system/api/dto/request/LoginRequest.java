@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Credentials used to sign in")
 public record LoginRequest(
-        @Schema(description = "Student ID or email address", example = "SV20260001")
+        @Schema(description = "Username (email or student ID)", example = "24020000")
         @NotBlank
-        String identifier,
+        String username,
 
         @Schema(description = "Account password", format = "password")
         @NotBlank
@@ -16,6 +16,6 @@ public record LoginRequest(
 
     @Override
     public String toString() {
-        return "LoginRequest[identifier=" + identifier + ", password=***]";
+        return "LoginRequest[username=" + username + ", password=***]";
     }
 }
