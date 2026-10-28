@@ -27,6 +27,7 @@ Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 ## Deploy
 
 ```bash
+mkdir -p data                   # create before compose, should do this if you gonna use SQLite, and modify the db for future use
 docker compose up -d --build    # app behind nginx at http://localhost
 ```
 Deployment, backup and operations: [DEPLOYMENT.md](.github/DEPLOYMENT.md).

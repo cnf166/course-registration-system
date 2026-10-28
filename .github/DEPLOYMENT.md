@@ -33,9 +33,9 @@ client ──:80──▶ nginx ──:8080──▶ app (Spring Boot, JRE 21) �
 |-------------------|------------------------|---------------------------------|
 | `DAO_SQLITE_PATH` | `/app/data/app.db`     | SQLite database file used by `DaoSqlite` |
 
-The database lives in `./data` on the host, bind-mounted to `/app/data` in the `app` container, so it survives rebuilds and container removal. If `./data` does not exist, Docker creates it on first start and the app creates `app.db` inside it.
+The database lives in `./data` on the host, bind-mounted to `/app/data` in the `app` container, so it survives rebuilds and container removal. The app creates `app.db` inside it on first start.
 
-> Files written by the container are owned by `root` on the host. Use `sudo` (or a container) to delete or replace them.
+> Create `./data` yourself before the first `docker compose up`. If it is missing, Docker creates it owned by `root`, and you can no longer replace or seed the db without `sudo`.
 
 ## Deploy
 
@@ -47,20 +47,16 @@ The database lives in `./data` on the host, bind-mounted to `/app/data` in the `
    git checkout master
    ```
 
-2. (Optional) Seed an existing database:
+2. Create the data folder, then build and start:
 
    ```bash
    mkdir -p data
-   cp /path/to/app.db data/app.db
-   ```
-
-3. Build and start:
-
-   ```bash
    docker compose up -d --build
    ```
 
-4. Verify:
+   To start from an existing db or fake data, put it in `data/` before `docker compose up`: copy it to `data/app.db`, or see [Seed fake data](#seed-fake-data).
+
+3. Verify:
 
    ```bash
    docker compose ps
@@ -89,6 +85,19 @@ Only `app` is rebuilt and recreated; `./data` is untouched.
 | Tail logs            | `docker compose logs -f app nginx`                        |
 | Shell into app       | `docker compose exec app sh`                              |
 | Reload nginx config  | `docker compose exec nginx nginx -s reload`               |
+
+### Seed fake data
+
+`scripts/seed_db.py` overwrites `data/app.db` with fake data: an `admin` / `admin123` account, students `20260001`… / `student123`, classes with schedules, and an open enrollment period. Stop the app first; otherwise it keeps writing to the deleted db and never sees the new one.
+
+```bash
+pip install -r scripts/requirements.txt
+docker compose stop app
+python3 scripts/seed_db.py        # --students, --classes, --seed; see --help
+docker compose start app
+```
+
+If it fails with `Permission denied`, `./data` was created by Docker; run `sudo chown -R $USER data` and retry.
 
 ### Backup
 
