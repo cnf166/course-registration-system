@@ -3,8 +3,13 @@ package com.course_registration_system.api.controller;
 import com.course_registration_system.api.dto.request.EnrollRequest;
 import com.course_registration_system.api.dto.response.BulkEnrollResponse;
 import com.course_registration_system.api.dto.response.MyClassesResponse;
-import com.course_registration_system.api.error.ApiNotImplementedException;
 import com.course_registration_system.api.error.ErrorResponse;
+import com.course_registration_system.api.mapper.EnrollmentMapper;
+import com.course_registration_system.business.classcourse.ClassCourseRepository;
+import com.course_registration_system.business.classcourse.model.ClassCourse;
+import com.course_registration_system.business.enrollment.EnrollmentService;
+import com.course_registration_system.business.enrollment.model.EnrollResult;
+import com.course_registration_system.business.enrollment.model.Enrollment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,10 +26,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/v1/enrollments")
 @Tag(name = "Enrollments", description = "Course registration of the signed-in student")
 public class EnrollmentController {
+
+    private final EnrollmentService enrollmentService;
+    private final ClassCourseRepository classCourseRepository;
+
+    public EnrollmentController(EnrollmentService enrollmentService,
+                                ClassCourseRepository classCourseRepository) {
+        this.enrollmentService = enrollmentService;
+        this.classCourseRepository = classCourseRepository;
+    }
+
+    // TODO (Security): replace resolveStudentId() with a real implementation
+    private String resolveStudentId() {
+        return "hardcoded-student-id";
+    }
 
     @PostMapping
     @Operation(
@@ -42,7 +65,9 @@ public class EnrollmentController {
     @ApiResponse(responseCode = "503", description = "System temporarily unable to process safely; retry later",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<BulkEnrollResponse> enroll(@Valid @RequestBody EnrollRequest request) {
-        throw new ApiNotImplementedException();
+        String studentId = resolveStudentId();
+        List<EnrollResult> results = enrollmentService.enroll(studentId, request.classIds());
+        return ResponseEntity.ok(EnrollmentMapper.toBulkResponse(results));
     }
 
     @DeleteMapping("/{classId}")
@@ -62,7 +87,9 @@ public class EnrollmentController {
     public ResponseEntity<Void> cancelEnrollment(
             @Parameter(description = "ID of the class to cancel")
             @PathVariable String classId) {
-        throw new ApiNotImplementedException();
+        String studentId = resolveStudentId();
+        enrollmentService.cancel(studentId, classId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/my-classes")
@@ -76,6 +103,16 @@ public class EnrollmentController {
     @ApiResponse(responseCode = "403", description = "The user is not a STUDENT",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<MyClassesResponse> getMyClasses() {
-        throw new ApiNotImplementedException();
+        String studentId = resolveStudentId();
+        List<Enrollment> enrollments = enrollmentService.getMyClasses(studentId);
+        
+        List<String> classIds = enrollments.stream()
+                .map(Enrollment::getClassId)
+                .toList();
+        Map<String, ClassCourse> classById = classCourseRepository.findByIds(classIds)
+                .stream()
+                .collect(Collectors.toMap(ClassCourse::getId, c -> c));
+
+        return ResponseEntity.ok(EnrollmentMapper.toMyClassesResponse(enrollments, classById));
     }
 }

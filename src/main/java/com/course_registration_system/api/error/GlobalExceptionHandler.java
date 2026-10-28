@@ -1,5 +1,8 @@
 package com.course_registration_system.api.error;
 
+import com.course_registration_system.business.exception.ConflictException;
+import com.course_registration_system.business.exception.NotFoundException;
+import com.course_registration_system.business.exception.RuleViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,7 +20,20 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // TODO: map BusinessException and its subtypes (not found, conflict, ...) to HTTP statuses.
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), false, request, List.of());
+    }
+
+    @ExceptionHandler(RuleViolationException.class)
+    public ResponseEntity<ErrorResponse> handleRuleViolation(RuleViolationException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), ex.getMessage(), false, request, List.of());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), ex.getMessage(), false, request, List.of());
+    }
 
     @ExceptionHandler(ApiNotImplementedException.class)
     public ResponseEntity<ErrorResponse> handleNotImplemented(ApiNotImplementedException ex,
