@@ -1,13 +1,5 @@
 # Deployment
 
-The service is deployed with Docker Compose as two containers:
-
-```text
-client ──:80──▶ nginx ──:8080──▶ app (Spring Boot, JRE 21) ──▶ /app/data/app.db
-                                                                   │
-                                                          bind mount ./data
-```
-
 | Service | Image                               | Role                                                   |
 |---------|-------------------------------------|--------------------------------------------------------|
 | `app`   | `course-registration-system:latest` | Built from `Dockerfile`; port 8080 is internal only    |
