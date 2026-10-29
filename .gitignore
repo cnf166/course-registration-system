@@ -38,3 +38,9 @@ build/
 
 ### Local SQLite database ###
 /data/
+
+### Python ###
+__pycache__/
+
+### Loadtest ###
+scripts/loadtest/results

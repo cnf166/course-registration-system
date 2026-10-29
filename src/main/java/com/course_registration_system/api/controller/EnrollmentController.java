@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +45,9 @@ public class EnrollmentController {
         this.classCourseRepository = classCourseRepository;
     }
 
-    // TODO (Security): replace resolveStudentId() with a real implementation
+    // The access token's subject is the user id; SecurityConfig only lets STUDENT tokens reach this controller
     private String resolveStudentId() {
-        return "hardcoded-student-id";
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     @PostMapping

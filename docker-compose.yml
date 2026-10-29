@@ -5,11 +5,17 @@ services:
     restart: unless-stopped
     environment:
       DAO_SQLITE_PATH: /app/data/app.db
+      # Read from .env; compose refuses to start without it
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
     volumes:
       - ./data:/app/data
     # Only reachable through nginx, not published on the host
     expose:
       - "8080"
+    # Fixed load test profile: 2 CPU / 2 GB
+    # cpus: "2.0"
+    # cpuset: "0,1"
+    # mem_limit: 2g
 
   nginx:
     image: nginx:1.27-alpine

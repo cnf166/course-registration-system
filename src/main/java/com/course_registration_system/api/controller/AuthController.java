@@ -3,8 +3,9 @@ package com.course_registration_system.api.controller;
 import com.course_registration_system.api.dto.request.LoginRequest;
 import com.course_registration_system.api.dto.request.RefreshTokenRequest;
 import com.course_registration_system.api.dto.response.TokenResponse;
-import com.course_registration_system.api.error.ApiNotImplementedException;
 import com.course_registration_system.api.error.ErrorResponse;
+import com.course_registration_system.business.auth.AuthService;
+import com.course_registration_system.business.auth.model.AuthTokens;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Authentication", description = "Sign in and token refresh (public endpoints)")
 public class AuthController {
 
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
     @PostMapping("/login")
     @Operation(
             summary = "Sign in",
@@ -33,7 +40,7 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "Identifier or password is incorrect",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
-        throw new ApiNotImplementedException();
+        return ResponseEntity.ok(toResponse(authService.login(request.username(), request.password())));
     }
 
     @PostMapping("/refresh-token")
@@ -47,6 +54,10 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "Refresh token is invalid or expired",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<TokenResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
-        throw new ApiNotImplementedException();
+        return ResponseEntity.ok(toResponse(authService.refresh(request.refreshToken())));
+    }
+
+    private static TokenResponse toResponse(AuthTokens tokens) {
+        return new TokenResponse(tokens.accessToken(), tokens.refreshToken(), "Bearer", tokens.expiresIn());
     }
 }
