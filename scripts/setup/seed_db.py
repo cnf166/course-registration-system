@@ -5,7 +5,7 @@ Gives dev and load testing a ready db without going through the API. The schema 
 what DaoSqlite creates from the data/entity classes, so keep it in sync when an entity changes.
 An existing db at the target path is overwritten.
 
-Usage: python3 scripts/seed_db.py [--db PATH] [--students N] [--classes N] [--seed N]
+Usage: python3 scripts/setup/seed_db.py [--db PATH] [--students N] [--classes N] [--seed N]
 """
 
 import argparse
@@ -21,7 +21,7 @@ try:
 except ImportError:
     sys.exit("Missing dependency: pip install -r scripts/requirements.txt")
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin123"

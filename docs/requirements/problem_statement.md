@@ -1,67 +1,66 @@
-# Bài toán đặt ra
+# Problem Statement
 
-## 1. Bối cảnh
+## 1. Context
 
-Khi cổng đăng ký học phần mở, sinh viên thường truy cập và gửi yêu cầu đăng ký cùng một lúc. Các hệ thống đăng ký mà nhóm từng sử dụng thường gặp sự cố đúng vào thời điểm này: máy chủ không phản hồi khi lượng truy cập đồng thời vượt quá một ngưỡng nhất định, khiến sinh viên không biết yêu cầu đăng ký của mình đã được xử lý thành công hay chưa.
+When the course registration portal opens, students tend to access it and submit registration requests at the same moment. The registration systems the team has used often fail at exactly this point: the server stops responding once concurrent traffic exceeds a certain threshold, leaving students unsure whether their registration request was processed successfully.
 
-Dự án hướng đến xây dựng một hệ thống đăng ký học phần có thể xử lý tốt tình huống này.
+The project aims to build a course registration system that handles this situation well.
 
-## 2. Đối tượng sử dụng
+## 2. Users
 
-- Sinh viên (đối tượng chính): cần đăng ký được lớp học phần mong muốn và nhận được kết quả rõ ràng, đáng tin cậy.
-- Quản trị viên hệ thống: chuẩn bị đợt đăng ký trước khi mở cổng, bao gồm tạo lớp học phần và thiết lập thời gian đăng ký. Quản trị viên không chịu áp lực xử lý lượng truy cập lớn trong giờ cao điểm.
+- Students (primary users): need to register for the classes they want and receive a clear, reliable result.
+- System administrators: prepare the registration period before the portal opens, including creating classes and setting the registration time window. Administrators are not under pressure from heavy traffic during peak hours.
 
-## 3. Vấn đề cần giải quyết
+## 3. Problem to Solve
 
-Khi đợt đăng ký bắt đầu, hơn 3.000 sinh viên có thể gửi yêu cầu đăng ký cùng một thời điểm. Ngay cả khi hệ thống chịu tải lớn, mọi yêu cầu vẫn phải được xử lý chính xác.
+When the registration period starts, more than 3,000 students may submit registration requests at the same time. Even under heavy load, every request must be processed correctly.
 
-Hệ thống có thể phản hồi chậm, nhưng không được xử lý sai.
+The system may respond slowly, but it must never process a request incorrectly.
 
-## 4. Các yêu cầu hệ thống phải đảm bảo
+## 4. Guarantees Requirements
 
-| Mã | Yêu cầu             | Ý nghĩa                                                                                                                                                                 |
-| -- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| G1 | Không vượt sức chứa | Số sinh viên đăng ký một lớp không bao giờ vượt quá sức chứa, kể cả khi nhiều yêu cầu cùng tranh chỗ cuối cùng.                                                         |
-| G2 | Không mất đăng ký   | Khi hệ thống thông báo đăng ký thành công, chỗ đó phải được giữ cho sinh viên và dữ liệu đăng ký vẫn tồn tại sau khi hệ thống gặp sự cố hoặc khởi động lại.             |
-| G3 | Không đăng ký trùng | Khi gửi lại yêu cầu hoặc nhấn nút đăng ký nhiều lần, sinh viên vẫn chỉ có tối đa một đăng ký cho mỗi lớp.                                                               |
-| G4 | Trả kết quả rõ ràng | Mỗi yêu cầu phải có kết quả: đăng ký thành công, bị từ chối kèm lý do hoặc hệ thống đang quá tải và yêu cầu thử lại. Không được để kết quả ở trạng thái không xác định. |
-| G5 | Suy giảm an toàn    | Khi quá tải, hệ thống có thể phản hồi chậm hoặc yêu cầu sinh viên thử lại, nhưng vẫn phải đảm bảo G1–G4.                                                                |
+| ID | Requirement          | Meaning                                                                                                                                                                         |
+| -- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1 | No overbooking       | The number of students registered in a class never exceeds its capacity, even when many requests compete for the last seat.                                                     |
+| G2 | No lost registration | Once the system reports a successful registration, the seat must be kept for the student and the registration data must survive a system failure or restart.                    |
+| G3 | No duplicates        | When a request is resent or the register button is pressed multiple times, the student still has at most one registration per class.                                            |
+| G4 | Clear results        | Every request must have a result: registered successfully, rejected with a reason, or the system is overloaded and asks to retry. No result may be left in an unknown state.    |
+| G5 | Safe degradation     | When overloaded, the system may respond slowly or ask students to retry, but must still guarantee G1–G4.                                                                        |
 
-Khi phải lựa chọn giữa độ tin cậy của kết quả (G1–G4) và khả năng tiếp nhận mọi yêu cầu trong giờ cao điểm, hệ thống ưu tiên tính đúng đắn và độ tin cậy.
+When G1, G4 and G5 conflict, the system should prioritizes correctness and reliability.
 
-## 5. Phạm vi dự án
+## 5. Project Scope
 
-### Trong phạm vi
+### In Scope
 
-Sinh viên
+Students
 
-- Xem các lớp học phần đang mở đăng ký và số chỗ còn lại.
-- Đăng ký một hoặc nhiều lớp trong cùng một yêu cầu. Mỗi lớp được xét độc lập; một lớp bị từ chối không làm hủy các lớp đã đăng ký thành công.
-- Hủy đăng ký một lớp khi đợt đăng ký còn mở. Chỗ vừa được giải phóng có thể được sinh viên khác đăng ký.
-- Xem danh sách lớp đã đăng ký để xác nhận kết quả khi yêu cầu trước đó bị timeout hoặc hệ thống thông báo quá tải và yêu cầu thử lại.
+- View the classes open for registration and the number of seats left.
+- Register for one or more classes in a single request. Each class is evaluated independently; a rejected class does not cancel the classes registered successfully.
+- Drop a class while the registration period is still open. The freed seat can be taken by another student.
+- View the list of registered classes to confirm the result when an earlier request timed out or the system reported it was overloaded and asked to retry.
 
-Quy tắc đăng ký - được kiểm tra riêng cho từng lớp tại thời điểm đăng ký
+Registration rules - checked separately for each class at registration time
 
-- Lớp còn chỗ, chưa đạt sức chứa tối đa.
-- Không trùng lịch với các lớp sinh viên đã đăng ký.
-- Tổng số tín chỉ đã đăng ký không vượt quá giới hạn cố định được quy định trong mã nguồn.
-- Chỉ được đăng ký hoặc hủy đăng ký trong thời gian đăng ký đã thiết lập.
+- The class still has seats and has not reached its maximum capacity.
+- No schedule conflict with classes the student has already registered for.
+- Total registered credits do not exceed a fixed limit defined in the source code.
+- Registering and dropping are only allowed within the configured registration period.
 
-Quản trị viên hệ thống
+System administrators
 
-- Tạo lớp học phần với các thông tin: tên lớp, số tín chỉ, sức chứa và lịch học. Mã lớp do hệ thống tự sinh.
-- Thiết lập thời gian bắt đầu và kết thúc đợt đăng ký. Một đợt đăng ký được áp dụng chung cho tất cả sinh viên.
+- Create classes with: class name, number of credits, capacity and schedule. The class ID is generated by the system.
+- Set the start and end time of the registration period. A single registration period applies to all students.
 
-# Các vấn đề nghiệp vụ
+# Business Problems
 
-1. **Vượt sức chứa:** Nhiều sinh viên đăng ký cùng lúc khiến số lượng đăng ký vượt sức chứa lớp.
-2. **Đăng ký trùng:** Sinh viên gửi lại yêu cầu hoặc nhấn đăng ký nhiều lần.
-3. **Trùng lịch:** Các lớp đã đăng ký có lịch học trùng nhau.
-4. **Vượt giới hạn tín chỉ:** Tổng số tín chỉ vượt mức cho phép.
-5. **Sai thời gian đăng ký:** Đăng ký ngoài thời gian quy định.
-6. **Hủy đăng ký:** Chỗ không được giải phóng chính xác sau khi hủy.
-7. **Không rõ kết quả:** Request timeout nhưng không biết đăng ký đã thành công hay chưa.
-8. **Đăng ký nhiều lớp:** Một lớp thất bại ảnh hưởng đến kết quả các lớp khác.
-9. **Mất dữ liệu:** Đăng ký đã xác nhận nhưng không được lưu bền vững.
-10. **Thay đổi thông tin lớp:** Sức chứa hoặc lịch học thay đổi trong đợt đăng ký.
-
+1. **Overbooking:** Many students registering at the same time push the number of registrations past the class capacity.
+2. **Duplicate registration:** A student resends the request or presses register multiple times.
+3. **Schedule conflict:** Registered classes have overlapping schedules.
+4. **Credit limit exceeded:** Total credits exceed the allowed limit.
+5. **Outside the registration period:** Registering outside the configured time window.
+6. **Dropping a class:** The seat is not released correctly after a drop.
+7. **Unknown result:** A request times out and it is unclear whether the registration succeeded.
+8. **Multi-class registration:** One class failing affects the results of the other classes.
+9. **Data loss:** A confirmed registration is not durably stored.
+10. **Class information changes:** Capacity or schedule changes during the registration period.

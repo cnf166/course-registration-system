@@ -11,7 +11,13 @@ Backend service for course registration: students browse courses, enroll in or d
 
 ## Tech Stack
 
-Java 21 · Spring Boot · Spring Security · SQLite (`DaoSqlite`) · Maven · OpenAPI/Swagger · Docker Compose · nginx
+- Java 21
+- Spring Boot
+- SQLite
+- Maven
+- OpenAPI/Swagger
+- Docker Compose
+- nginx
 
 ## Getting Started
 
@@ -23,6 +29,11 @@ Requires Java 21 (Maven is provided via `./mvnw`).
 ```
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+OpenAPI JSON: `http://localhost:8080/v3/docs`
+
+To access these route, get the generated password from the app logs at startup.
+- Username: `user`
+- Password: `random generated password`
 
 ## Deploy
 

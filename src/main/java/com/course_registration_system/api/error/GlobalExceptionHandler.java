@@ -5,6 +5,7 @@ import com.course_registration_system.business.exception.ConflictException;
 import com.course_registration_system.business.exception.InvalidInputException;
 import com.course_registration_system.business.exception.NotFoundException;
 import com.course_registration_system.business.exception.RuleViolationException;
+import com.course_registration_system.business.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, ex.getCode(), ex.getMessage(), false, request, List.of());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getCode(), ex.getMessage(), false, request, List.of());
     }
 
     @ExceptionHandler(BusinessException.class)
