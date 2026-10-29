@@ -17,7 +17,7 @@ When the registration period starts, more than 3,000 students may submit registr
 
 The system may respond slowly, but it must never process a request incorrectly.
 
-## 4. Guarantees the System Must Provide
+## 4. Guarantees Requirements
 
 | ID | Requirement          | Meaning                                                                                                                                                                         |
 | -- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -27,7 +27,7 @@ The system may respond slowly, but it must never process a request incorrectly.
 | G4 | Clear results        | Every request must have a result: registered successfully, rejected with a reason, or the system is overloaded and asks to retry. No result may be left in an unknown state.    |
 | G5 | Safe degradation     | When overloaded, the system may respond slowly or ask students to retry, but must still guarantee G1–G4.                                                                        |
 
-When forced to choose between the reliability of results (G1–G4) and the ability to accept every request during peak hours, the system prioritizes correctness and reliability.
+When G1, G4 and G5 conflict, the system should prioritizes correctness and reliability.
 
 ## 5. Project Scope
 
