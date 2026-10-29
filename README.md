@@ -29,6 +29,11 @@ Requires Java 21 (Maven is provided via `./mvnw`).
 ```
 
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+OpenAPI JSON: `http://localhost:8080/v3/docs`
+
+To access these route, get the generated password from the app logs at startup.
+- Username: `user`
+- Password: `random generated password`
 
 ## Deploy
 
