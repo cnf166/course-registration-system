@@ -49,7 +49,7 @@ Deployment, backup and operations: [DEPLOYMENT.md](.github/DEPLOYMENT.md).
 |----------|-------------|
 | [Problem Statement](docs/requirements/problem_statement.md) | Problem statement |
 | [Architecture](docs/specs/architecture.md) | Project structure and dependency rules |
-| [API Specification](docs/specs/api-specs.md) | API contract |
+| [API Specification](docs/specs/api_specs.md) | API contract |
 | [DB Schema](docs/specs/db_schema.md) | Database design |
 | [Sprints](docs/sprints/) | Sprint plans |
 | [Deployment](.github/DEPLOYMENT.md) | Docker Compose deployment |
