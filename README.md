@@ -11,7 +11,13 @@ Backend service for course registration: students browse courses, enroll in or d
 
 ## Tech Stack
 
-Java 21 · Spring Boot · Spring Security · SQLite (`DaoSqlite`) · Maven · OpenAPI/Swagger · Docker Compose · nginx
+- Java 21
+- Spring Boot
+- SQLite
+- Maven
+- OpenAPI/Swagger
+- Docker Compose
+- nginx
 
 ## Getting Started
 
