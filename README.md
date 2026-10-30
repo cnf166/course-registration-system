@@ -1,15 +1,13 @@
-# Course Registration System
+# Hệ Thống Đăng Ký Học Phần (Course Registration System)
 
-Backend service for course registration: students browse courses, enroll in or drop class sections, and view their schedule and transcript; the System Admin manages courses, class sections, semesters and enrollment periods.
+## Mục lục
 
-## Table of Contents
+* [Công nghệ sử dụng](#công-nghệ-sử-dụng)
+* [Bắt đầu nhanh](#bắt-đầu-nhanh)
+* [Triển khai](#triển-khai)
+* [Tài liệu hướng dẫn (Documentation)](#tài-liệu-hướng-dẫn-documentation)
 
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Deploy](#deploy)
-- [Documentation](#documentation)
-
-## Tech Stack
+## Công nghệ sử dụng
 
 - Java 21
 - Spring Boot
@@ -19,37 +17,34 @@ Backend service for course registration: students browse courses, enroll in or d
 - Docker Compose
 - nginx
 
-## Getting Started
+## Bắt đầu nhanh
 
-Requires Java 21 (Maven is provided via `./mvnw`).
+Yêu cầu môi trường cài đặt Java 21 (Maven đã được tích hợp sẵn qua `./mvnw`).
 
 ```bash
-./mvnw spring-boot:run          # run locally
-./mvnw clean package            # build the jar into target/
+./mvnw spring-boot:run          # Chạy ứng dụng ở môi trường local
+./mvnw clean package            # Đóng gói file jar vào thư mục target/
+
 ```
 
+Giao diện Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 OpenAPI JSON: `http://localhost:8080/v3/docs`
 
-To access these route, get the generated password from the app logs at startup.
-- Username: `user`
-- Password: `random generated password`
-
-## Deploy
+## Triển khai
 
 ```bash
-mkdir -p data                   # create before compose, should do this if you gonna use SQLite, and modify the db for future use
-docker compose up -d --build    # app behind nginx at http://localhost
+mkdir -p data                   # Tạo thư mục trước khi compose (cần thiết nếu sử dụng SQLite để lưu trữ và cập nhật DB sau này)
+docker compose up -d --build    # Ứng dụng chạy phía sau nginx tại http://localhost
+
 ```
-Deployment, backup and operations: [DEPLOYMENT.md](.github/DEPLOYMENT.md).
 
-## Documentation
+## Tài liệu hướng dẫn (Documentation)
 
-| Document | Description |
-|----------|-------------|
-| [Problem Statement](docs/requirements/problem_statement.md) | Problem statement |
-| [Architecture](docs/specs/architecture.md) | Project structure and dependency rules |
-| [API Specification](docs/specs/api_specs.md) | API contract |
-| [DB Schema](docs/specs/db_schema.md) | Database design |
-| [Sprints](docs/sprints/) | Sprint plans |
-| [Deployment](.github/DEPLOYMENT.md) | Docker Compose deployment |
+| Tài liệu (Document) | Mô tả tiếng Việt | Description (English) |
+| --- | --- | --- |
+| [Problem Statement](docs/requirements/problem_statement_vi.md) | Bài toán và yêu cầu nghiệp vụ | Problem statement |
+| [Architecture](docs/specs/architecture_vi.md) | Kiến trúc dự án và quy tắc phụ thuộc | Project structure and dependency rules |
+| [API Specification](docs/specs/api_specs_vi.md) | Đặc tả giao diện lập trình ứng dụng (API contract) | API contract |
+| [DB Schema](docs/specs/db_schema.md) | Thiết kế lược đồ cơ sở dữ liệu | Database design |
+| [Deployment](.github/DEPLOYMENT.md) | Hướng dẫn triển khai bằng Docker Compose | Docker Compose deployment |
