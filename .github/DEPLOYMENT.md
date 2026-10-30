@@ -1,13 +1,5 @@
 # Deployment
 
-The service is deployed with Docker Compose as two containers:
-
-```text
-client ──:80──▶ nginx ──:8080──▶ app (Spring Boot, JRE 21) ──▶ /app/data/app.db
-                                                                   │
-                                                          bind mount ./data
-```
-
 | Service | Image                               | Role                                                   |
 |---------|-------------------------------------|--------------------------------------------------------|
 | `app`   | `course-registration-system:latest` | Built from `Dockerfile`; port 8080 is internal only    |
@@ -66,7 +58,7 @@ The database lives in `./data` on the host, bind-mounted to `/app/data` in the `
 
    A `401` response means the request reached the app through nginx and was rejected by Spring Security, so the stack is up. A `502` means nginx is running but the app is not (check `docker compose logs app`).
 
-## Update to a new version
+## Update new version
 
 ```bash
 git pull
@@ -74,30 +66,6 @@ docker compose up -d --build
 ```
 
 Only `app` is rebuilt and recreated; `./data` is untouched.
-
-## Operations
-
-| Task                 | Command                                                   |
-|----------------------|-----------------------------------------------------------|
-| Stop                 | `docker compose stop`                                     |
-| Stop and remove      | `docker compose down` (data in `./data` is kept)          |
-| Restart app only     | `docker compose restart app`                              |
-| Tail logs            | `docker compose logs -f app nginx`                        |
-| Shell into app       | `docker compose exec app sh`                              |
-| Reload nginx config  | `docker compose exec nginx nginx -s reload`               |
-
-### Seed fake data
-
-`scripts/seed_db.py` overwrites `data/app.db` with fake data: an `admin` / `admin123` account, students `20260001`… / `student123`, classes with schedules, and an open enrollment period. Stop the app first; otherwise it keeps writing to the deleted db and never sees the new one.
-
-```bash
-pip install -r scripts/requirements.txt
-docker compose stop app
-python3 scripts/seed_db.py        # --students, --classes, --seed; see --help
-docker compose start app
-```
-
-If it fails with `Permission denied`, `./data` was created by Docker; run `sudo chown -R $USER data` and retry.
 
 ### Backup
 

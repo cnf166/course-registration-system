@@ -1,32 +1,32 @@
 # Project Structure 
 
-Backend hệ thống được chia thành ba tầng: **API**, **Business (Nghiệp Vụ)**, **Data**. Business nằm ở giữa và không biết gì về framework hay database; API và Data cùng phụ thuộc vào nó.
+The backend is split into three layers: **API**, **Business**, **Data**. Business sits in the middle and knows nothing about the framework or the database; API and Data both depend on it.
 
 ```text
 API ──→ Business ←── Data
 ```
 
-Một request đi qua các lớp như sau:
+A request passes through the layers as follows:
 
 ```text
 HTTP → Controller → Service → Repository (interface) → Adapter → Spring Data/JPA → PostgreSQL
 ```
 
-# Tài liệu Hệ thống
+# System Documentation
 
-### Dưới đây là phần thiết kế hệ thống:
+### Below is the system design:
 
-![Kiến trúc Hệ thống Đăng ký Môn học](/docs/highlevel_sd.png)
+![Course Registration System Architecture](/docs/highlevel_sd.png)
 
-*Hình 1: Sơ đồ thiết kế hệ thống mức cao đề xuất cho hệ thống đăng ký môn học.*
+*Figure 1: Proposed high-level system design for the course registration system.*
 
-### Còn dưới đây là mô tả kiến trúc nhóm lựa chọn cho hệ thống:
+### And below is the architecture the team chose for the system:
 
-![Kiến trúc Hệ thống Đăng ký Môn học](/docs/layered_architecture.png)
+![Course Registration System Architecture](/docs/layered_architecture.png)
 
-*Hình 2: Sơ đồ kiến trúc hệ thống.*
+*Figure 2: System architecture diagram.*
 
-## Cấu trúc thư mục
+## Directory Structure
 
 ```text
 src/main/java/com/course_registration_system/
@@ -42,7 +42,7 @@ src/main/java/com/course_registration_system/
 │   ├── course/
 │   ├── courseclass/
 │   ├── enrollment/
-│   ├── semester/        # gồm cả EnrollmentPeriod
+│   ├── semester/        # includes EnrollmentPeriod
 │   └── exception/
 ├── data/
 │   ├── entity/          # JPA entity
@@ -56,5 +56,4 @@ src/main/resources/
 └── db/migration/
 ```
 
-Mỗi package con trong `business/` có cùng bộ ba: model, service, và interface repository (ví dụ `course/` có `Course`, `CourseService`, `CourseRepository`).
-
+Each subpackage in `business/` has the same trio: model, service, and repository interface (e.g. `course/` has `Course`, `CourseService`, `CourseRepository`).

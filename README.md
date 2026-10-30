@@ -9,7 +9,13 @@
 
 ## Công nghệ sử dụng
 
-Java 21 · Spring Boot · Spring Security · SQLite (`DaoSqlite`) · Maven · OpenAPI/Swagger · Docker Compose · nginx
+- Java 21
+- Spring Boot
+- SQLite
+- Maven
+- OpenAPI/Swagger
+- Docker Compose
+- nginx
 
 ## Bắt đầu nhanh
 
@@ -22,6 +28,8 @@ Yêu cầu môi trường cài đặt Java 21 (Maven đã được tích hợp s
 ```
 
 Giao diện Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+OpenAPI JSON: `http://localhost:8080/v3/docs`
 
 ## Triển khai
 
@@ -30,8 +38,6 @@ mkdir -p data                   # Tạo thư mục trước khi compose (cần t
 docker compose up -d --build    # Ứng dụng chạy phía sau nginx tại http://localhost
 
 ```
-
-Chi tiết về quy trình triển khai, sao lưu và vận hành: xem tại [DEPLOYMENT.md](https://www.google.com/search?q=.github/DEPLOYMENT.md).
 
 ## Tài liệu hướng dẫn (Documentation)
 

@@ -1,1 +1,2 @@
 bcrypt>=4.0
+locust>=2.20
